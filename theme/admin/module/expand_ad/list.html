@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#ad_"+id).fadeOut('slow');
+							setTimeout('location.href="?page={page}&nat={nat}"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+	
+	//批量删除
+	$(".delsome").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=delsome&id='+idarr;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+								var idnum;
+								idnum=idarr.split(",")
+								for(i=0;i<=idnum.length;i++)
+								{
+									$("#ad_"+idnum[i]).fadeOut('slow');
+								}
+								setTimeout('location.href="?page={page}&nat={nat}"',1000);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		
+		$(".islock").click(function(){doset("islock");})
+		$(".nolock").click(function(){doset("nolock");})			
+})
+
+function doset(t0)
+{
+	var arrchk=$("input[name='id']:checked");
+	var idarr="";
+	$(arrchk).each(function(){
+		if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+	}); 
+	if(idarr=="")
+	{
+		$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+	}
+	else
+	{
+		var url='?act=doset&go='+t0+'&id='+idarr;
+		$.ajax({
+		type:"get",
+		cache:false,
+		url:url,
+		success:function(_)
+		{
+			if(_.substring(0,1)==0)
+			{
+				$.fn.tips({type:"error",content:_.substring(1)});
+			}
+			else
+			{
+				location.href="?page={page}&nat={nat}";
+			}
+		}
+		});
+	}
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">广告管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe618;</span>添加广告</a><dl>
+                    <dt><a href="?act=add_text">文字广告</a></dt>
+                    <dt><a href="?act=add_pic">图片广告</a></dt>
+                    <dt><a href="?act=add_flash">Flash广告</a></dt>
+                    <dt><a href="?act=add_code">代码广告</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="nolock">通过审核</a></dt>
+                    <dt><a href="javascript:;" class="islock">取消审核</a></dt>
+                    <dt><a href="javascript:;" class="delsome">批量删除</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{nattitle}</a><dl>
+                    <dt><a href="?nat=1">未审</a></dt>
+                    <dt><a href="?nat=2">已审</a></dt>
+                    <dt><a href="?nat=3">过期</a></dt>
+                    <dt><a href="?nat=4">文字广告</a></dt>
+                    <dt><a href="?nat=5">图片广告</a></dt>
+                    <dt><a href="?nat=6">Flash广告</a></dt>
+                    <dt><a href="?nat=7">代码广告</a></dt>
+                </dl></li>
+                <li><a href="sd_expand_class.asp?followid=3"><span class="iconfont">&#xe61b;</span>广告类别管理</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        广告管理
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>广告名称</th>
+                    <th width="100">广告类型</th>
+                    <th width="60">排序</th>
+                    <th width="120">开始日期</th>
+                    <th width="120">结束日期</th>
+                    <th width="80">是否审核</th>
+                    <th width="120">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,title,adtype,begindate,overdate,islock,ordnum,style" table="sd_expand_ad" where="1=1 [sqlwhere]" order="ordnum desc,id desc" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="8">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="ad_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td class="txt_left" {$rs[style]}>{$rs[title]}</td>
+                <td>{ad_type($rs[adtype])}广告</td>
+                <td>{$rs[ordnum]}</td>
+                <td>{sdcms.iif(sdcms.getdate($rs[begindate],"-",1)="1753-01-01","",sdcms.getdate($rs[begindate],"-",1))}</td>
+                <td>{sdcms.iif(sdcms.getdate($rs[overdate],"-",1)="9999-12-31","",sdcms.getdate($rs[overdate],"-",1))}</td>
+                <td>{sdcms.iif($rs[islock]=0,"<span>否</span>","是")}</td>
+                <td><a href="?act=call&id={$rs[id]}">调用</a>　<a href="?act=edit_{ad_url($rs[adtype])}&id={$rs[id]}&page={page}&nat={nat}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

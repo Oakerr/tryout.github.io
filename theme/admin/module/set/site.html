@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function()
+{
+	$("#t3_0").click(function(){$("#cachedate").css("display","block")});
+	$("#t3_1").click(function(){$("#cachedate").css("display","none")});
+}
+)
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=site">站点设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">网站名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" class="ip" value="{sitedata(0,0)}" data-rule="网站名称:required;"></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">运行模式：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t1" value="1" id="t1_1" {if sitedata(0,1)=1}checked{/if} /><label for="t1_1">动态</label>
+           <input type="radio" name="t1" value="2" id="t1_2" {if sitedata(0,1)=2}checked{/if} /><label for="t1_2">伪静态</label>
+           <input type="radio" name="t1" value="3" id="t1_3" {if sitedata(0,1)=3}checked{/if} /><label for="t1_3">静态</label><span>伪静态模式需要服务器支持，否则网站无法访问</span>
+                    </div>
+                </div>
+                <div class="form_group dis">
+                    <div class="form_txt">页面压缩：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t2" value="true" id="t2_0" /><label for="t2_0">开启</label>
+           <input type="radio" name="t2" value="false" id="t2_1" checked /><label for="t2_1">关闭</label><span>开启后，将压缩页面代码和体积，提升打开速度</span>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">数据缓存：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t3" value="true" id="t3_0" {if sitedata(0,3)}checked{/if} /><label for="t3_0">开启</label>
+           <input type="radio" name="t3" value="false" id="t3_1" {if not(sitedata(0,3))}checked{/if} /><label for="t3_1">关闭</label><span>开启后，有利于提升系统运行速度</span>
+                    </div>
+                </div>
+                <div class="form_group{if not(sitedata(0,3))} dis{/if}" id="cachedate">
+                    <div class="form_txt">缓存时间：</div>
+                    <div class="form_input"><input type="text" name="t4" size="50" maxlength="9" class="ip" value="{sitedata(0,4)}" data-rule="缓存时间:required;digits"/>　<span>单位：秒，只能写数字，否则默认为：60</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">模板缓存：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t7" value="true" id="t7_0" {if sitedata(0,7)}checked{/if} /><label for="t7_0">开启</label>
+           <input type="radio" name="t7" value="false" id="t7_1" {if not(sitedata(0,7))}checked{/if} /><label for="t7_1">关闭</label><span>开启后，修改模板需要先删除模板缓存才能看到效果</span>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">ICP备案号：</div>
+                    <div class="form_input"><input type="text" name="t5" size="50" maxlength="20" class="ip" value="{sitedata(0,5)}" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">第三方统计：</div>
+                    <div class="form_input"><textarea name="t6" cols="80" rows="4" class="tt">{sitedata(0,6)}</textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=sitedb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=site'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

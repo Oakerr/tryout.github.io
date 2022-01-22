@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?act=group">会员组管理</a> > <a href="?act=groupadd">添加会员组</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_li">
+                    <div class="form_txt">会员组名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="30" class="ip" maxlength="50" data-rule="会员组名称:required;"  /></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">优惠百分比：</div>
+                    <div class="form_input"><input type="text" name="t1" size="30" class="ip" maxlength="3" value="100" data-rule="优惠百分比:required;"  />%　<span>消费时的折扣</span></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">所需积分：</div>
+                    <div class="form_input"><input type="text" name="t2" size="30" class="ip" maxlength="10" data-rule="所需积分:required;"  />　<span>升级至本级别所需要的最低积分</span></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">权限设置：</div>
+                    <div class="form_input"><input type="checkbox" name="t3" id="t3" value="1" checked="checked" /><label for="t3">允许自动升级</label>
+           <input type="checkbox" name="t4" id="t4" value="1" checked="checked" /><label for="t4">允许登录</label>
+           <input type="checkbox" name="t5" id="t5" value="1" checked="checked" /><label for="t5">允许投稿</label>
+           <input type="checkbox" name="t6" id="t6" value="1" /><label for="t6">投稿无需审核</label>
+           <input type="checkbox" name="t7" id="t7" value="1" checked="checked" /><label for="t7">允许上传附件</label></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">每日最大投稿数：</div>
+                    <div class="form_input"><input type="text" name="t8" size="30" maxlength="10" class="ip" value="0" data-rule="每日最大投稿数:required;"  />　<span>为0时不限制，前提：必须允许投稿</span></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">是否为默认组：</div>
+                    <div class="form_input"><input type="radio" name="t9" id="t9_0" value="0" checked="checked" /><label for="t9_0">否</label>
+           <input type="radio" name="t9" id="t9_1" value="1" /><label for="t9_1">是</label>
+           　<span>会员注册成功后默认加入此会员组</span></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=groupadddb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=group'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

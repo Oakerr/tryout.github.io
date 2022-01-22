@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#class_"+id).fadeOut('slow');
+							setTimeout("location.href='?followid={followid}'",1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+		
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?followid={followid}">类别管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="?act=add&followid={followid}"><span class="iconfont">&#xe618;</span>添加类别</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        类别列表
+        </div>
+        <form class="formname" method="post">
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="60">ID</th>
+                    <th width="80">排序</th>
+                    <th>类别名称</th>
+                    <th width="80">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs top="0" field="classid,classname,ordnum" table="sd_expand_class" where="followid=[followid]" order="ordnum,classid"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="6">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="class_{$rs[classid]}">
+                <td>{$rs[classid]}</td>
+                <td><input type="hidden" name="cid" value="{$rs[classid]}" ><input type="text" name="ordnum" value="{$rs[ordnum]}" size="4" maxlength="4" class="ordnum" data-rule="排序:required;digit" ></td>
+                <td class="txt_left">{$rs[classname]}</td>
+                <td><a href="?act=edit&id={$rs[classid]}&followid={followid}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[classid]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        {if islist=1}
+        <div class="table_bottom">
+           <input type="submit" value="保存排序" /><ul>{showpage}</ul>
+        </div>
+        {/if}
+         </form>
+    </div>
+</div>
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=order&followid={followid}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?followid={followid}'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.vtip.css" rel="stylesheet" type="text/css">
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#plug_"+id).fadeOut('slow');
+							setTimeout('location.href="?page={page}"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+	
+	//批量删除
+	$(".delsome").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=delsome&id='+idarr;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+								var idnum;
+								idnum=idarr.split(",")
+								for(i=0;i<=idnum.length;i++)
+								{
+									$("#plug_"+idnum[i]).fadeOut('slow');
+								}
+								setTimeout('location.href="?page={page}"',1000);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		
+		//清空垃圾文件
+		$(".clear").click(function(){
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u6e05\u7406\u65e0\u6548\u9644\u4ef6\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url;
+					url='?act=clearall';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:_.substring(1)});
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+					cancel:true 
+				}).showModal();
+			})
+				
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：插件 > <a href="?">附件管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="delsome">批量删除</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{nattitle}</a><dl>
+                    <dt><a href="?">全部</a></dt>
+                    <dt><a href="?nat=1">图片</a></dt>
+                    <dt><a href="?nat=2">flash</a></dt>
+                    <dt><a href="?nat=3">压缩文件</a></dt>
+                    <dt><a href="?nat=4">其他</a></dt>
+                    <dt><a href="?nat=5">无效文件</a></dt>
+                </dl></li>
+                <li><a href="javascript:;" class="clear"><span class="iconfont">&#xe60f;</span>清理无效附件</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        附件列表
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>附件名称</th>
+                    <th width="250">原文件名</th>
+                    <th width="120">附件大小</th>
+                    <th width="50">图片</th>
+                    <th width="50">使用</th>
+                    <th width="50">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,fullname,oldname,filename,filesize,fileext,ispic,createdate,createip,cid" table="sd_attachment" where="1=1 [sqlwhere]" order="id desc" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="7">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="plug_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td title="附件编号：{$rs[id]}<br>上传日期：{$rs[createdate]}<br>上传者IP：{$rs[createip]}" class="txt_left vtip"><img src="{webroot}lib/images/ext/{getsrc($rs[fileext])}.gif" align="absmiddle"><a href="{$rs[fullname]}" target="_blank">{$rs[filename]}</a></td>
+                <td>{$rs[oldname]}</td>
+                <td>{$rs[filesize]} <span>Kb</span></td>
+                <td>{if $rs[ispic]=0}<span>否</span>{else}是{/if}</td>
+                <td>{if $rs[cid]<=0}<span>否</span>{else}是{/if}</td>
+                <td><a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

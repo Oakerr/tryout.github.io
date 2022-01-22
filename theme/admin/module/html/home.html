@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：生成 > <a href="?act=home">生成首页</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">生成首页：</div>
+                    <div class="form_input"><input type="submit" value="开始生成" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="table_form">
+            <div class="form_group">
+                <div class="form_txt">生成进度：</div>
+                <div class="form_input">
+                    <div id="create_staus"><div id="create_percent">0%</div></div>
+                    <div id="create_text">待生成</div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+{
+	stopOnError:true,
+	theme:'yellow_top',
+	ignore:':hidden',
+	valid:function(form)
+	{
+		create_home(1);
+	}
+});
+
+function percent(t0,t1)
+{
+	$("#create_percent").css("background","#91B6E5");
+	$("#create_percent").css("color","#fff");
+	$("#create_percent").css("width",t0);
+	$("#create_percent").html(t0);
+	$("#create_text").html(t1);
+}
+
+function create_home(page)
+{
+	$.ajax({
+		url:"html/index.asp?admin_id={adminid}&loginbase={admin_loginbase}&loginkey={admin_loginkey}&page="+page,
+		type:"post",
+		cache:false,
+		error:function(e){alert(e);},
+		success:function(d){
+			var total=d.substring(1);
+			if(page>=total)
+			{
+				percent("100%","首页生成完毕");
+			}
+			else
+			{
+				var w=parseInt(page/total*100)+"%";
+				var t="共<span>"+total+"</span>页，已生成<span>"+page+"</span>页";
+				percent(w,t);
+				create_home(page+1);
+			}
+		}
+	})
+}
+</script>
+
+</body>
+</html>

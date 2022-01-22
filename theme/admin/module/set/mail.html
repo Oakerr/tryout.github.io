@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+function setclose(t0)
+{
+	if(t0==""){$(".no").css("display","none")}else{$(".no").css("display","block");}
+}
+$(function(){
+	{if sitedata(0,0)=""}$(".no").css("display","none"){else}$(".no").css("display","block");{/if}
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=mail">邮件设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">组件选择：</div>
+                    <div class="form_input"><select name="t0" onChange="setclose(this.value)" class="ip">
+               <option value="" {asp sdcms.iif(sitedata(0,0)="","selected","")}>关闭组件</option>
+               <option value="{asp sdcms.iif(sdcms.isinstall("JMail.SMTPMail"),"jmail","-1")}" {asp sdcms.iif(sitedata(0,0)="jmail","selected","")}>JMail.SMTPMail{asp sdcms.iif(sdcms.isinstall("JMail.SMTPMail"),"√","×")}</option>
+               <option value="{asp sdcms.iif(sdcms.isinstall("CDO.Message"),"cdosys","-1")}" {asp sdcms.iif(sitedata(0,0)="cdosys","selected","")}>CDO.Message{asp sdcms.iif(sdcms.isinstall("CDO.Message"),"√","×")}</option>
+           </select>　<span>都不支持时，请关闭组件</span></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">Smtp服务器：</div>
+                    <div class="form_input"><input type="text" name="t1" size="30" maxlength="50" class="ip" value="{sitedata(0,1)}" data-rule="Smtp服务器:required;" /><span>例：smtp.126.com，详细请询问邮箱服务商</span>
+                    </div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">邮箱账户：</div>
+                    <div class="form_input">
+                    <input type="text" name="t2" size="30" maxlength="50" class="ip" value="{sitedata(0,2)}" data-rule="邮箱账户:required;email;" /><span>格式：mail@126.com，请填写完成邮箱地址</span>
+                    </div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">邮箱密码：</div>
+                    <div class="form_input">
+                    <input type="password" name="t3" size="30" maxlength="50" class="ip" value="{sitedata(0,3)}" data-rule="Smtp邮箱密码:required;" /><span>请填写上面邮箱账户的登录密码</span>
+                    </div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">管理员邮箱：</div>
+                    <div class="form_input"><input type="text" name="t4" size="30" maxlength="50" class="ip" value="{sitedata(0,4)}" /><span>可以留空，只能写一个邮箱</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=maildb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=mail'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

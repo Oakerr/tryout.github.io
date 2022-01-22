@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/jquery-ui.min.js"></script>
+<script src="{webroot}theme/admin/js/jquery.layout-latest.min.js"></script>
+<script src="{webroot}lib/js/jquery.uploader.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+window.UEDITOR_HOME_URL="{webroot}";
+var editor_cid=0;
+var editor_classid=1;
+var editor_upload_root="{get_adminfolder}";
+var editor_adminid="{adminid}";
+var editor_loginbase="{admin_loginbase}";
+var editor_loginkey="{admin_loginkey}";
+</script>
+<script src="{webroot}lib/ueditor/editor_config.js"></script>
+<script src="{webroot}lib/ueditor/editor.js"></script>
+<script>
+var myLayout;
+$(function(){
+	myLayout=$("body").layout({north__spacing_open:0,south__spacing_open:0,east__spacing_open:0,east__minSize:250,east__initClosed:{sdcms[sys_optional]},resizable:false});
+	$(".ui-layout-toggler-east").click(function(){$(".right_subject span").fadeToggle(300);});
+	$(".right_subject span a").click(function(){myLayout.toggle('east');$(this).parent().fadeToggle(100)});
+	UE.getEditor('t2',editorOption);
+	{editor_int}
+	$("#golike .del").live("click",function(){$(this).parent().remove();});
+	$("#s0").click(function(){
+		if($(this).attr("checked")){
+		$("#c0").attr("value","font-weight:bold;");
+		}else{$("#c0").attr("value","");}
+	})
+	$("#s1").click(function(){
+		if($(this).attr("checked")){
+		$("#c1").attr("value","font-style:italic;");
+		}else{$("#c1").attr("value","");}
+	})
+	//beigin
+	var $addInput=$("#addInput");
+	var $tableid=$("#voteitem");
+	var $addInput=$("#addInput");
+	$addInput.click(function(){
+		var sonnum=$("#voteitem li").size();
+		var textValueTrHtml='<li><input type="text" name="t29" id="t29_'+sonnum+'" size="15" maxlength="50" class="ip" value="本地下载'+(sonnum+1)+'" data-rule="项目名称:required;" /><input type="text" name="t30" id="t30_'+sonnum+'" size="40" maxlength="255" class="ip" data-rule="下载地址:required;" />　<a href="javascript:;" class="leftarr iconfont">&#xe60a;</a><a href="javascript:;" class="rightarr iconfont">&#xe608;</a><a href="javascript:;" class="delarr iconfont">&#xe602;</a><span for="t30_'+sonnum+'" class="msg-box"></span></li>';
+	   sonnum=$("#voteitem li").size();
+	   if(sonnum==10)
+	   {
+		   $.fn.tips({content:'最多只能添加10个'});
+		   return false;
+	   }
+	   else
+	   {
+		   $tableid.append(textValueTrHtml);
+		 }
+	})
+	
+	$(".leftarr").live("click", function() {
+		var $ValueTr = $(this).parent();
+		var $PrevTr = $ValueTr.prev("li");
+		var PrevTrIndex = $("#voteitem li").index($PrevTr);
+		$PrevTr.insertAfter($ValueTr);
+	});
+	
+	$(".rightarr").live("click", function() {
+		var $ValueTr = $(this).parent();
+		var $NextTr = $ValueTr.next("li");
+		if ($NextTr.length > 0) {
+			$NextTr.insertBefore($ValueTr);
+		}
+	});
+	
+	$(".delarr").live("click", function() {
+		if (confirm("\u60a8\u786e\u5b9a\u8981\u5220\u9664\u5417\uff1f") == true) {
+		var sonnum=$("#voteitem li").size()
+		 $(this).parent().remove();
+		}
+	});
+})
+</script>
+</head>
+<body>
+
+<div class="ui-layout-north">
+    <div class="right_subject"><span><a href="javascript:;">关闭选填项目</a></span>当前位置：内容 > <a href="sd_content.asp?classid={classid}">{catename}</a> > <a href="?classid={classid}&act=add">发布内容</a></div>
+</div>
+<form class="formname" method="post">
+<div class="ui-layout-center">
+    <div class="table_form">
+        <div class="form_group">
+            <div class="form_txt">标题：</div>
+            <div class="form_input">
+            <input type="text" name="t0" id="t0" size="50" maxlength="255" class="ip" data-rule="标题:required;" />
+            <input name="s0" type="checkbox" id="s0" /><label for="s0">粗体</label>
+            <input name="s1" type="checkbox" id="s1" /><label for="s1">斜体</label>
+            <input type="hidden" name="c0" id="c0" />
+            <input type="hidden" name="c1" id="c1" />
+            <input type="hidden" name="s2" id="s2" />
+            <img src="{webroot}lib/images/colorpicker.gif" title="标题颜色" align="absmiddle" id="color" /><span for="t0" class="msg-box"></span></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">缩略图：</div>
+            <div class="form_input"><input type="text" name="t6" id="t6" size="50" maxlength="255" class="ip" /><input type="button" value="上传" config="t6:1:0:1"  class="bnt bnt_save" /><input type="button" value="引用" class="bnt_quote bnt_save" config="t6:t2" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">下载地址：</div>
+            <div class="form_input">
+            <input type="button" value="本地上传" class="bnt_save" id="select_file" config="t2:2:0:1:5"><input type="button" value="远程地址" class="bnt_normal" id="addInput">
+               <ul class="voteitem" id="voteitem">
+               </ul>
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件版本：</div>
+            <div class="form_input"><input type="text" name="t17" size="50" maxlength="20" class="ip" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件大小：</div>
+            <div class="form_input"><input type="text" name="t18" size="10" maxlength="10" class="ip" />
+               <input type="radio" name="t19" id="t19_1" value="KB" ><label for="t19_1">KB</label>
+               <input type="radio" name="t19" id="t19_2" value="MB" checked ><label for="t19_2">MB</label>
+               <input type="radio" name="t19" id="t19_3" value="GB" ><label for="t19_3">GB</label>
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件语言：</div>
+            <div class="form_input">
+            <%arr=array("简体中文","繁体中文","英文","多国语言")%>
+            {for i=0 to ubound(arr)}
+            <input type="radio" name="t20" id="t20_<%=i%>" value="{arr(i)}" {if i=0}checked{/if}><label for="t20_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件授权：</div>
+            <div class="form_input">
+            <%arr=array("共享版","免费版","商业版","试用版","开源软件","特别版")%>
+            {for i=0 to ubound(arr)}
+            <input type="radio" name="t21" id="t21_<%=i%>" value="{arr(i)}" {if i=0}checked{/if}><label for="t21_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件属性：</div>
+            <div class="form_input">
+            <%arr=array("国产软件","国外软件","汉化软件","汉化补丁","破解补丁")%>
+            {for i=0 to ubound(arr)}
+            <input type="radio" name="t22" id="t22_<%=i%>" value="{arr(i)}" {if i=0}checked{/if}><label for="t22_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">操作系统：</div>
+            <div class="form_input">
+            <%arr=array("Win9X","2000","XP","2003","Vista","Win7","Unix","Linux")%>
+            {for i=0 to ubound(arr)}
+            <input type="checkbox" name="t23" id="t23_<%=i%>" value="{arr(i)}"><label for="t23_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">编程语言：</div>
+            <div class="form_input">
+            <%arr=array("Asp","Php","Jsp",".Net","Cgi")%>
+            {for i=0 to ubound(arr)}
+            <input type="checkbox" name="t24" id="t24_<%=i%>" value="{arr(i)}"><label for="t24_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">数据库类型：</div>
+            <div class="form_input">
+            <%arr=array("Access","Mssql","Mysql","Zend","SQLite","Oracle")%>
+            {for i=0 to ubound(arr)}
+            <input type="checkbox" name="t25" id="t25_<%=i%>" value="{arr(i)}"><label for="t25_<%=i%>">{arr(i)}</label>
+            {/for}
+            </div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">开发商名称：</div>
+            <div class="form_input"><input type="text" name="t26" size="50" maxlength="50" class="ip" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">开发商URL：</div>
+            <div class="form_input"><input type="text" name="t27" size="50" maxlength="50" class="ip" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">演示URL：</div>
+            <div class="form_input"><input type="text" name="t28" size="50" maxlength="50" class="ip" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">软件星级：</div>
+            <div class="form_input"><select name="t31" class="ip"><option value="1">★☆☆☆☆</option><option value="2">★★☆☆☆</option><option value="3" selected>★★★☆☆</option><option value="4">★★★★☆</option><option value="5">★★★★★</option></select></div>
+        </div>
+        {if isarray(field_data)}
+        {for i=0 to ubound(field_data,2)}
+        <div class="form_group">
+            <div class="form_txt">{field_data(1,i)}：</div>
+            <div class="form_input">{get_self_field(field_data(0,i),field_data(1,i),field_data(2,i),field_data(3,i),field_data(5,i),field_data(7,i),field_data(8,i),field_data(9,i),"",field_data(11,i),0,field_data(6,i),0)}</div>
+        </div>
+        {/for}
+        {/if}
+        <div class="form_group">
+            <div class="form_txt">软件介绍：</div>
+            <div class="form_input"><textarea name="t2" id="t2" style="width:98%;"></textarea><input type="checkbox" name="up" id="up" value="1"><label for="up">保存远程图片</label><input type="checkbox" name="frist" id="frist" value="1"><label for="frist">提取首张图片为缩略图</label></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">Tags：</div>
+            <div class="form_input"><input type="text" name="t1" id="t1" size="40" maxlength="255" class="ip" /><input type="button" value="根据标题提取" config="t0:t1:{classid}" class="bnt_tags bnt_save" />　<span>支持空格和英文逗号分隔</span></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">META关键字：</div>
+            <div class="form_input"><input type="text" name="t4" size="50" maxlength="255" class="ip" /></div>
+        </div>
+        <div class="form_group">
+            <div class="form_txt">META描述：</div>
+            <div class="form_input"><input type="text" name="t5" size="50" maxlength="255" class="ip" /></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-east">
+    <div class="table_form">
+        <div class="form_li dis">
+            <div class="form_txt">作者：</div>
+            <div class="form_input"><input type="text" name="t7" size="25" maxlength="50" value="{penname}" class="ip" /></div>
+        </div>
+        <div class="form_li dis">
+            <div class="form_txt">来源：</div>
+            <div class="form_input"><input type="text" name="t8" id="t8" size="12" maxlength="50" class="ip" /> <select onChange="$('#t8').val(this.value)" class="ip">
+  <option value="">选择</option>
+  <option value="未知">未知</option>
+  <option value="原创">原创</option>
+  <option value="转载">转载</option>
+</select></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">人气：</div>
+            <div class="form_input"><input type="text" name="t9" size="25" maxlength="10" value="0" class="ip" /></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">下载所需积分：</div>
+            <div class="form_input"><input type="text" name="t16" size="25" maxlength="10" value="0" class="ip" /></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">文件名称：</div>
+            <div class="form_input"><input name="t32" type="text" size="25" maxlength="50" class="ip" /></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">状态：</div>
+            <div class="form_input">
+            <input type="checkbox" name="t10" id="t10" value="1" checked="checked" /><label for="t10">发布</label>
+       <input type="checkbox" name="t11" id="t11" value="1" /><label for="t11">推荐</label>
+       <input type="checkbox" name="t12" id="t12" value="1" /><label for="t12">置顶</label>
+       <input type="checkbox" name="t13" id="t13" value="1" checked="checked" /><label for="t13">允许评论</label></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">发布日期：</div>
+            <div class="form_input"><input name="t14" type="text" value="{now()}" size="25" maxlength="50" class="ip" /></div>
+        </div>
+        <div class="form_li">
+            <div class="form_txt">相关内容：</div>
+            <div class="form_input"><input type="text" id="key" size="15" class="ip" value="请输入关键字" onFocus="if(this.value==defaultValue)this.value=''" onBlur="if(this.value=='')this.value=defaultValue" config="{classid}:{id}" /><input type="button" value="查找" id="likesearch" class="bnt_save" />
+            <ul id="golike"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-south">
+    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+</div>
+</form>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_right_effect',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			if($("input[name=t30]").length<=0)
+			{
+				$.fn.tips({content:"请至少添加一个下载地址"});
+				$("input[type='submit']").attr("disabled",false);
+				return false;
+			}
+			UE.getEditor('t2').sync();
+			$("#t2").val(UE.getEditor('t2').getContent());
+			{editor_get}
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb&classid={classid}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					if(data.status=="n"){$.fn.tips({type:"warn",content:data.info});$("input[type='submit']").attr("disabled",false);}
+					else
+					{
+						var arr=data.info;
+						arr=arr.split(":");
+						var id=arr[0];
+						var info=arr[1];
+						var url="sd_content.asp?classid={classid}";
+						{if webmode=3}
+						if($("#t10").attr("checked")!=undefined)
+						{
+							{if sdcms.getsys("htmlhome") or sdcms.getsys("htmlclass") or sdcms.getsys("htmlcontent")}
+							$.fn.tips.close();
+							top.dialog({id:"html",title:"正在生成相关数据",padding:0,content:"<div id='html_staus'></div>",cancel:false}).showModal();
+							var staus=true;
+							{if sdcms.getsys("htmlhome")}
+							staus=false;
+							staus=auto_home({adminid},"{admin_loginbase}","{admin_loginkey}")
+							{/if}
+							{if sdcms.getsys("htmlclass")}
+							var parentid="{parentid}";
+							var arr=parentid.split(",");
+							for(i=0;i<arr.length;i++)
+							{
+								staus=false;
+								staus=auto_class({adminid},"{admin_loginbase}","{admin_loginkey}",{sdcms.getsys("htmltotal")},arr[i])
+							}
+							{/if}
+							{if sdcms.getsys("htmlcontent")}
+							staus=false;
+							staus=auto_content({adminid},"{admin_loginbase}","{admin_loginkey}",id,1)
+							{/if}
+							if(staus){setTimeout(function(){location.href=url},1500);}
+							{else}
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+							{/if}
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+						}
+						{else}
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+						{/if}
+					}
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

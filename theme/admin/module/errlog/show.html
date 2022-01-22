@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：<a href="?">错误日志</a> > <a href="?act=show&id={id}">查看日志</a></div>
+    <div class="right_body">
+        <div class="table_form">
+                <div class="form_group">
+                    <div class="form_txt">日期：</div>
+                    <div class="form_input">{data(0,0)}</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">详情：</div>
+                    <div class="form_input">{data(1,0)}</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

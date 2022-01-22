@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.vtip.css" rel="stylesheet" type="text/css">
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url,data;
+					url='?act=del&id='+id+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+								$("#user_"+id).fadeOut('slow');
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+		
+		$(".move").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				var html="";
+				html+='<dl class="move">';
+				html+='  <dt><b>目标用户组：</b><select name="go" id="go">{get_group}</select></dt>';
+				html+='</dl>';
+				top.dialog({
+					title:'批量移动',
+					content:html,
+					ok:function(){
+						var t0=$("#go")[0].value;
+						if(t0=="")
+						{
+							alert("\u4e0d\u80fd\u79fb\u52a8\u5230\u5f53\u524d\u680f\u76ee");
+							return false
+						}
+						var url;
+						url='?act=move&id='+idarr+'&go='+t0;
+						$.ajax({
+						type:"get",
+						cache:false,
+						url:url,
+						success:function(_)
+						{
+							var act=_.substring(0,1);
+							var info=_.substring(1);
+							switch(act)
+							{
+								case "0":
+									$.fn.tips({type:"error",content:info});
+									break;
+								case "1":
+									$.fn.tips({type:"ok",content:"\u79fb\u52a8\u6210\u529f"});
+									setTimeout('location.href="?act=list&keyword={keyword}"',1500);
+									break;
+								default:
+									alert(_);
+									break;
+							}
+						}
+						});
+										
+						},
+					cancel:true 
+				}).showModal();
+
+			}
+		})
+		
+		$(".movecate").click(function(){
+			var html="";
+			html+='<dl class="movecate">'
+			html+='  <dt><b>来源用户组：</b><select name="comecate" id="comecate">{get_group}</select></dt>'
+			html+='  <dt><b>目标用户组：</b><select name="gocate" id="gocate">{get_group}</select></dt>'
+			html+='</dl>'
+			top.dialog({
+				title:'按用户组移动',
+				content:html,
+				ok:function(){
+						var t0=$("#comecate")[0].value;
+						var t1=$("#gocate")[0].value;
+						if(t0=="")
+						{
+							alert("\u6765\u6e90\u7528\u6237\u7ec4\u4e0d\u80fd\u4e3a\u7a7a");
+							return false
+						}
+						if(t1=="")
+						{
+							alert("\u76ee\u6807\u7528\u6237\u7ec4\u4e0d\u80fd\u4e3a\u7a7a");
+							return false
+						}
+						if(t0==t1)
+						{
+							alert("\u6765\u6e90\u7528\u6237\u7ec4\u4e0d\u80fd\u548c\u76ee\u6807\u7528\u6237\u7ec4\u4e00\u81f4");
+							return false
+						}		
+						
+						var url;
+						url='?act=movecate&keyword={keyword}&comecate='+t0+'&gocate='+t1;
+						$.ajax({
+						type:"get",
+						cache:false,
+						url:url,
+						success:function(_)
+						{
+							var act=_.substring(0,1);
+							var info=_.substring(1);
+							switch(act)
+							{
+								case "0":
+									$.fn.tips({type:"error",content:info});
+									break;
+								case "1":
+									$.fn.tips({type:"ok",content:"\u79fb\u52a8\u6210\u529f"});
+									setTimeout('location.href="?act=list&keyword={keyword}"',1500);
+									break;
+								default:
+									alert(_);
+									break;
+							}
+						}
+						});
+											
+					},
+				cancel:true 
+			}).showModal();
+
+		})
+		
+		$(".delall").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url;
+					url='?act=delall&id='+idarr+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							var idnum;
+							idnum=idarr.split(",")
+							for(i=0;i<=idnum.length;i++)
+							{
+								$("#user_"+idnum[i]).fadeOut('slow');
+							}
+							setTimeout('location.href="?act=list"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		
+		$(".islock").click(function(){doset("islock");})
+		$(".nolock").click(function(){doset("nolock");})
+})
+function doset(t0)
+{
+	var arrchk=$("input[name='id']:checked");
+	var idarr;
+	idarr="";
+	$(arrchk).each(function(){
+		if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+	}); 
+	if(idarr=="")
+	{
+		$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+	}
+	else
+	{
+		var url;
+		url='?act=doset&go='+t0+'&id='+idarr+'';
+		$.ajax({
+		type:"get",
+		cache:false,
+		url:url,
+		success:function(_)
+		{
+			var act=_.substring(0,1);
+			var info=_.substring(1);
+			switch(act)
+			{
+				case "0":
+					$.fn.tips({type:"error",content:info});
+					break;
+				case "1":
+					location.href="?act=list&page={page}&keyword={keyword}";
+					break;
+				default:
+					alert(_);
+					break;
+			}
+		}
+		});
+	}
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?act=list">会员管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <div class="search"><form action="?" method="get" onSubmit="return checksearch(this)"><input type="hidden" name="act" value="list"><input type="text" name="keyword" class="ip" value="请输入关键字" onFocus="if(this.value==defaultValue)this.value=''" onBlur="if(this.value=='')this.value=defaultValue" /><input type="submit" class="bnt" value="查询" /></form></div>
+            <ul>
+                <li><a href="?act=add"><span class="iconfont">&#xe618;</span>新建会员</a></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="islock">激活会员</a></dt>
+                    <dt><a href="javascript:;" class="nolock">锁定会员</a></dt>
+                    <dt><a href="javascript:;" class="delall">删除会员</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>移动会员↓</a><dl>
+                    <dt><a href="javascript:;" class="move">批量移动</a></dt>
+                    <dt><a href="javascript:;" class="movecate">按组移动</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{statitle}</a><dl>
+                    <dt><a href="?act=list&sta=0">全部</a></dt>
+                    <dt><a href="?act=list&sta=1">正常</a></dt>
+                    <dt><a href="?act=list&sta=2">未激活</a></dt>
+                    <dt><a href="?act=list&sta=3">锁定</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{nattitle}</a><dl>
+                    <dt><a href="?act=list&nat=0">全部</a></dt>
+                    <dt><a href="?act=list&nat=1">未登录过</a></dt>
+                    <dt><a href="?act=list&nat=2">VIP会员(正常)</a></dt>
+                    <dt><a href="?act=list&nat=3">VIP会员(过期)</a></dt>
+                    <dt><a href="?act=list&nat=4">普通会员</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{ordtitle}</a><dl>
+                    <dt><a href="?act=list&order=0">正常排序</a></dt>
+                    <dt><a href="?act=list&order=1">登录次数↑</a></dt>
+                    <dt><a href="?act=list&order=2">登录次数↓</a></dt>
+                    <dt><a href="?act=list&order=3">注册日期↑</a></dt>
+                    <dt><a href="?act=list&order=4">注册日期↓</a></dt>
+                    <dt><a href="?act=list&order=5">账户金额↑</a></dt>
+                    <dt><a href="?act=list&order=6">账户金额↓</a></dt>
+                    <dt><a href="?act=list&order=7">账户积分↑</a></dt>
+                    <dt><a href="?act=list&order=8">账户积分↓</a></dt>
+                </dl></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        会员组列表
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>用户名</th>
+                    <th width="80">昵称</th>
+                    <th width="60">VIP会员</th>
+                    <th width="90">金额</th>
+                    <th width="90">积分</th>
+                    <th width="70">登录次数</th>
+                    <th width="90">用户组</th>
+                    <th width="60">完整性</th>
+                    <th width="50">状态</th>
+                    <th width="120">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,username,nickname,amount,point,logintimes,createdate,lastlogindate,lastloginip,islock,(select groupname from sd_user_group where sd_user_group.id=sd_user.groupid) as gname,[percent],remark,createip,isvip,overdate" table="sd_user" where="1=1 [sqlwhere][wherekey]" order="[orderby]" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="11">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="user_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td title="注册日期：{$rs[createdate]}<br>注册IP：{$rs[createip]}<br>最后登录日期：{$rs[lastlogindate]}<br>最后登录IP：{$rs[lastloginip]}<br>备注：{$rs[remark]}" class="vtip txt_left">{$rs[username]}</td>
+                <td>{$rs[nickname]}</td>
+                <td>{sdcms.iif($rs[isvip]=1,"是","<span>否</span>")}{if $rs[isvip]=1}({if $rs[overdate]>=thisdate}正常{else}<span>过期</span>{/if}){/if}</td>
+                <td title="点击查看财务明细" class="vtip"><a href="sd_user_money.asp?userid={$rs[id]}">{sdcms.getnum($rs[amount])}</a></td>
+                <td title="点击查看积分明细" class="vtip"><a href="sd_user_point.asp?userid={$rs[id]}">{$rs[point]}</a></td>
+                <td>{$rs[logintimes]}</td>
+                <td>{$rs[gname]}</td>
+                <td>{$rs[percent]}%</td>
+                <td>{sdcms.iiif($rs[islock]=-1,$rs[islock]=0,"<span>锁定</span>","<span>未激活</span>","正常")}</td>
+                <td><a href="?act=base&id={$rs[id]}&page={page}&sta={sta}&nat={nat}&order={order}&keyword={keyword}">资料</a>　<a href="?act=edit&id={$rs[id]}&page={page}&sta={sta}&nat={nat}&order={order}&keyword={keyword}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

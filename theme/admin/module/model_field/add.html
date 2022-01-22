@@ -1,0 +1,383 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$("#t2").change(function(){
+		var value=$(this).val();
+		$("#t13").prop('selectedIndex',0);
+		$("#fupload").css("display","none");
+		switch (value)
+		{
+			case "1":
+				var html='';
+				html+='<select name="t4" class="ip">'
+				html+='<option value="1">文本</option>'
+				html+='</select>'
+				$("#typevalue").html(html);
+				$("#datatype").css("display","none");
+				html='';
+				html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+				html+='<option value="">请选择验证规则</option>'
+				html+='<option value="1">不为空</option>'
+				html+='<option value="4">电话</option>'
+				html+='<option value="5">手机</option>'
+				html+='<option value="6">邮箱</option>'
+				html+='<option value="8">邮编</option>'
+				html+='<option value="9">QQ</option>'
+				html+='<option value="10">网址</option>'
+				html+='</select>'
+				$("#vrule").html(html);
+				html='';
+				html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+				html+='<input type="radio" name="t8" id="t8_0" value="0">否';
+				$("#mustvalue").html(html)
+				$("#modetype").css("display","block");
+				$("#lengths").css("display","block");
+				$("#options").css("display","none");
+				$("#ismust").css("display","block");
+				$("#rules").css("display","block");
+				$("#t3_1").attr("checked",'checked')
+			break;
+			case "2":
+				html='';
+				html+='<select name="t4" class="ip">'
+				html+='<option value="5">备注</option>'
+				html+='</select>'
+				$("#typevalue").html(html);
+				html='';
+				html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+				html+='<option value="">请选择验证规则</option>'
+				html+='<option value="1">不为空</option>'
+				html+='</select>'
+				$("#vrule").html(html);
+				html='';
+				html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+				html+='<input type="radio" name="t8" id="t8_0" value="0">否';
+				$("#mustvalue").html(html)
+				$("#datatype").css("display","none");
+				$("#modetype").css("display","none");
+				$("#lengths").css("display","none");
+				$("#options").css("display","none");
+				$("#ismust").css("display","block");
+				$("#rules").css("display","block");
+			break;
+			case "6":
+				html='';
+				html+='<select name="t4" class="ip">'
+				html+='<option value="5">备注</option>'
+				html+='</select>'
+				$("#typevalue").html(html);
+				html='';
+				html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+				html+='<option value="">请选择验证规则</option>'
+				html+='<option value="1">不为空</option>'
+				html+='</select>'
+				$("#vrule").html(html);
+				$("#datatype").css("display","none");
+				$("#modetype").css("display","none");
+				$("#lengths").css("display","none");
+				$("#options").css("display","none");
+				$("#ismust").css("display","none");
+				$("#rules").css("display","none");
+			break;
+			default:
+				html='';
+				html+='<select name="t4" class="ip">'
+				html+='<option value="1">文本</option>'
+				html+='</select>'
+				$("#typevalue").html(html);
+				html='';
+				html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+				html+='<option value="">请选择验证规则</option>'
+				html+='<option value="1">不为空</option>'
+				html+='</select>'
+				$("#vrule").html(html);
+				html='';
+				html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+				html+='<input type="radio" name="t8" id="t8_0" value="0">否';
+				$("#mustvalue").html(html)
+				$("#datatype").css("display","none");
+				$("#modetype").css("display","none");
+				$("#lengths").css("display","none");
+				$("#options").css("display","block");
+				$("#ismust").css("display","block");
+				$("#rules").css("display","block");
+			break;
+		}
+	})
+	$("#t3_1").click(function(){
+		var html='';
+		html+='<select name="t4" class="ip">'
+		html+='<option value="1">文本</option>'
+		html+='</select>'
+		$("#typevalue").html(html);
+		$("#datatype").css("display","none");
+		html='';
+		html+='<select name="t9" class="ip">'
+		html+='<option value="">请选择验证规则</option>'
+		html+='<option value="1">不为空</option>'
+		html+='<option value="4">电话</option>'
+		html+='<option value="5">手机</option>'
+		html+='<option value="6">邮箱</option>'
+		html+='<option value="8">邮编</option>'
+		html+='<option value="9">QQ</option>'
+		html+='<option value="10">网址</option>'
+		html+='</select>'
+		$("#vrule").html(html);
+		$("#rules").css("display","block");
+		html='';
+		html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+		html+='<input type="radio" name="t8" id="t8_0" value="0">否';
+		$("#mustvalue").html(html)
+		$("#lengths").css("display","block");
+		$("#t13").prop('selectedIndex',0);
+		$("#fupload").css("display","none");
+	})
+	$("#t3_2").click(function(){
+		var html='';
+		html+='<select name="t4" class="ip">'
+		html+='<option value="2">数字</option>'
+		html+='</select>'
+		$("#typevalue").html(html);
+		$("#datatype").css("display","block");
+		html='';
+		html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+		html+='<option value="2">整数</option>'
+		html+='</select>'
+		$("#vrule").html(html);
+		$("#rules").css("display","block");
+		html='';
+		html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+		$("#mustvalue").html(html)
+		$("#datatype").css("display","none");
+		$("#lengths").css("display","none");
+		$("#t13").prop('selectedIndex',0);
+		$("#fupload").css("display","none");
+	})
+	$("#t3_5").click(function(){
+		var html='';
+		html+='<select name="t4" class="ip">'
+		html+='<option value="3">货币</option>'
+		html+='</select>'
+		$("#typevalue").html(html);
+		$("#datatype").css("display","block");
+		html='';
+		html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+		html+='<option value="3">小数</option>'
+		html+='</select>'
+		$("#vrule").html(html);
+		$("#rules").css("display","block");
+		html='';
+		html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+		$("#mustvalue").html(html)
+		$("#datatype").css("display","none");
+		$("#lengths").css("display","none");
+		$("#t13").prop('selectedIndex',0);
+		$("#fupload").css("display","none");
+	})
+	$("#t3_3").click(function(){
+		var html='';
+		html+='<select name="t4" class="ip">'
+		html+='<option value="4">日期</option>'
+		html+='</select>'
+		$("#typevalue").html(html);
+		$("#datatype").css("display","none");
+		html='';
+		html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+		html+='<option value="7">日期</option>'
+		html+='</select>'
+		$("#vrule").html(html);
+		$("#rules").css("display","block");
+		html='';
+		html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+		$("#mustvalue").html(html)
+		$("#lengths").css("display","none");
+		$("#t13").prop('selectedIndex',0);
+		$("#fupload").css("display","none");
+	})
+	$("#t3_4").click(function(){
+		var html='';
+		html+='<select name="t4" class="ip">'
+		html+='<option value="1">文本</option>'
+		html+='</select>'
+		$("#typevalue").html(html);
+		$("#datatype").css("display","none");
+		html='';
+		html+='<select name="t9" class="ip" data-rule="验证规则:required;">'
+		html+='<option value="1">不为空</option>'
+		html+='</select>'
+		$("#vrule").html(html);
+		$("#rules").css("display","block");
+		html='';
+		html+='<input type="radio" name="t8" id="t8_1" value="1" checked>是';
+		html+='<input type="radio" name="t8" id="t8_0" value="0">否';
+		$("#mustvalue").html(html)
+		$("#lengths").css("display","block");
+		$("#fupload").css("display","block");
+	})
+	$("#t8_1").live("click",function(){$("#rules").css("display","block");})
+	$("#t8_0").live("click",function(){$("#rules").css("display","none");})
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：栏目 > <a href="sd_model.asp">模型管理</a> > <a href="?act=field&modelid={modelid}">字段管理</a> > <a href="?act=add&modelid={modelid}">添加字段</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">字段名称：</div>
+                    <div class="form_input">My_<input type="text" name="t0" id="t0" size="26" maxlength="20" class="ip" data-rule="字段名称:required;fieldname" /><span>不可重复，不可更改</span><span for="t0" class="msg-box"></span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">字段别名：</div>
+                    <div class="form_input"><input type="text" name="t1" size="30" maxlength="30" class="ip" data-rule="字段别名:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">字段类型：</div>
+                    <div class="form_input">
+                        <select name="t2" id="t2" class="ip" data-rule="字段类型:required;">
+                        <option value="">请选择字段类型</option>
+                        <option value="1">单行文本框</option>
+                        <option value="2">多行文本框</option>
+                        <option value="3">下拉列表</option>
+                        <option value="4">单选按钮</option>
+                        <option value="5">复选框</option>
+                        <option value="6">HTML编辑器</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form_group dis" id="modetype">
+                    <div class="form_txt">表现形式：</div>
+                    <div class="form_input">
+                        <input type="radio" name="t3" id="t3_1" value="1" checked>普通文本
+                        <input type="radio" name="t3" id="t3_2" value="2">整数
+                        <input type="radio" name="t3" id="t3_5" value="5">小数
+                        <input type="radio" name="t3" id="t3_3" value="3">日期
+                        <input type="radio" name="t3" id="t3_4" value="4">上传
+                    </div>
+                </div>
+                <div class="form_group dis" id="fupload">
+                    <div class="form_txt">上传类型：</div>
+                    <div class="form_input">
+                        <select name="t13" id="t13" class="ip" data-rule="上传类型:required;">
+                        <option value="">请选择上传类型</option>
+                        <option value="1">图片</option>
+                        <option value="2">附件</option>
+                        <option value="3">视频</option>
+                        <option value="5">Flash</option>
+                        <option value="4">全部类型</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form_group dis" id="datatype">
+                    <div class="form_txt">数据类型：</div>
+                    <div class="form_input" id="typevalue"></div>
+                </div>
+                <div class="form_group dis" id="lengths">
+                    <div class="form_txt">字段长度：</div>
+                    <div class="form_input"><input type="text" name="t5" id="t5" size="30" maxlength="3" class="ip" data-rule="字段长度:required;integer;range[1~255]" /><span>1-255</span><span for="t5" class="msg-box"></span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">默认值：</div>
+                    <div class="form_input"><input type="text" name="t6" size="30" maxlength="255" class="ip" /></div>
+                </div>
+                <div class="form_group dis" id="options">
+                    <div class="form_txt">列表内容：</div>
+                    <div class="form_input"><textarea name="t7" id="t7" class="tt" cols="30" rows="6" data-rule="列表内容:required;"></textarea><span>示范：项目名称|项目值</span><span for="t7" class="msg-box"></span><br><span>一行一个项目</span></div>
+                </div>
+                <div class="form_group dis" id="ismust">
+                    <div class="form_txt">是否必填：</div>
+                    <div class="form_input" id="mustvalue">
+                        <input type="radio" name="t8" id="t8_1" value="1" checked>是
+                        <input type="radio" name="t8" id="t8_0" value="0">否
+                    </div>
+                </div>
+                <div class="form_group dis" id="rules">
+                    <div class="form_txt">验证规则：</div>
+                    <div class="form_input" id="vrule">
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">去掉两端空格：</div>
+                    <div class="form_input">
+                        <input type="radio" name="t10" id="t10_1" value="1" checked>是
+                        <input type="radio" name="t10" id="t10_0" value="0" >否
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">字段排序：</div>
+                    <div class="form_input">
+                        <input name="t11" id="t11" type="text" class="ip" value="0" size="30" maxlength="10" data-rule="字段排序:required;integer;" /><span>数字越小越靠前</span><span for="t11" class="msg-box"></span>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">状态：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t12" value="1" id="t12_1" checked /><label for="t12_1">正常</label>
+                    <input type="radio" name="t12" value="0" id="t12_0" /><label for="t12_0">锁定</label>
+                    </div>
+                </div>
+
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_right_effect',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb&modelid={modelid}",
+				type:"post",
+				data:$(form).serialize(),
+				error:function(data){alert(data);},
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?modelid={modelid}"',1000);}
+					else{$("input[type='submit']").attr("disabled",false);}	
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

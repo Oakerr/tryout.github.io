@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=seo">优化设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">优化标题：</div>
+                    <div class="form_input"><textarea name="t0" cols="60" rows="4" onKeyUp="strlen_verify(this,'title_len',255)" class="tt">{sitedata(0,0)}</textarea>　还可输入<span id="title_len">{asp (255-sdcms.strlen(sitedata(0,0)))}</span> 个字符　<br><span>附加在HTML源码的title标签内的文字</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">站点关键字：</div>
+                    <div class="form_input"><textarea name="t1" cols="60" rows="4" onKeyUp="strlen_verify(this,'key_len',255)" class="tt">{sitedata(0,1)}</textarea>　还可输入<span id="key_len">{asp (255-sdcms.strlen(sitedata(0,1)))}</span> 个字符　<br><span>META标签的keywords内容. 关键字之间使用 "," 分隔</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">站点描述：</div>
+                    <div class="form_input"><textarea name="t2" cols="60" rows="4" onKeyUp="strlen_verify(this,'description_len',255)" class="tt">{sitedata(0,2)}</textarea>　还可输入<span id="description_len">{asp (255-len(sitedata(0,2)))}</span> 个字符　<br><span>META标签的description内容</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_right_effect',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=seodb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=seo'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+window.UEDITOR_HOME_URL="{webroot}";
+var editor_cid="{classid}";
+var editor_classid=2;
+var editor_upload_root="{get_adminfolder}";
+var editor_adminid="{adminid}";
+var editor_loginbase="{admin_loginbase}";
+var editor_loginkey="{admin_loginkey}";
+</script>
+<script src="{webroot}lib/ueditor/editor_config.js"></script>
+<script src="{webroot}lib/ueditor/editor.js"></script>
+<script>
+$(function(){
+	UE.getEditor('t0');
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：内容 > <a href="?classid={classid}">{catename}</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">内容：</div>
+                    <div class="form_input"><textarea name="t0" id="t0" cols="39" rows="6" style="width:98%;">{sdcms.enhtml(content)}</textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			UE.getEditor('t0').sync();
+			$("#t0").val(UE.getEditor('t0').getContent());
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=savedb&classid={classid}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){
+						{if webmode=3}
+						$.fn.tips.close();
+						top.dialog({id:"html",title:"正在生成相关数据",padding:0,content:"<div id='html_staus'></div>",cancel:false}).showModal();
+						var staus=false;
+						staus=auto_class({adminid},"{admin_loginbase}","{admin_loginkey}",99,{classid})
+						if(staus){setTimeout(function(){location.href='?classid={classid}'},1500);}
+						{if sdcms.getsys("htmlhome")}
+							staus=false;
+							staus=auto_home({adminid},"{admin_loginbase}","{admin_loginkey}")
+							{/if}
+						{/if}}
+					$("input[type='submit']").attr("disabled",false);	
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

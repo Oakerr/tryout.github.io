@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：栏目 > <a href="?">模型管理</a> > <a href="?act=add">添加模型</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">模型名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" maxlength="20" class="ip" data-rule="模型名称:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">数据表名：</div>
+                    <div class="form_input">Sd_Model_<input type="text" name="t1" size="40" maxlength="20" class="ip" data-rule="数据表名:required;fieldname;" />　<span>不可重复，不可更改</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">模型描述：</div>
+                    <div class="form_input"><input type="text" name="t2" size="50" maxlength="20" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">后台管理路径：</div>
+                    <div class="form_input"><input type="text" name="t3" size="50" maxlength="255" class="ip" data-rule="后台管理路径:required;" />　<span>例：sd_model_news.asp?classid=</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">后台添加模板：</div>
+                    <div class="form_input"><input type="text" name="t7" size="50" maxlength="255" class="ip" data-rule="后台添加模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">后台修改模板：</div>
+                    <div class="form_input"><input type="text" name="t8" size="50" maxlength="255" class="ip" data-rule="后台修改模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">后台投稿模板：</div>
+                    <div class="form_input"><input type="text" name="t9" size="50" maxlength="255" class="ip" data-rule="后台投稿模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">前台首页模板：</div>
+                    <div class="form_input"><input type="text" name="t4" size="50" maxlength="255" class="ip" data-rule="前台首页模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">前台列表模板：</div>
+                    <div class="form_input"><input type="text" name="t5" size="50" maxlength="255" class="ip" data-rule="前台列表模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">前台内容模板：</div>
+                    <div class="form_input"><input type="text" name="t6" size="50" maxlength="255" class="ip" data-rule="前台内容模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">前台投稿模板：</div>
+                    <div class="form_input"><input type="text" name="t10" size="50" maxlength="255" class="ip" data-rule="前台投稿模板:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">前台投稿路径：</div>
+                    <div class="form_input"><input type="text" name="t11" size="50" maxlength="255" class="ip" data-rule="前台投稿路径:required;" />　<span>例：news.asp?classid=</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?"',1000);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

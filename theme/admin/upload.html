@@ -1,0 +1,53 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>文件上传</title>
+    <link rel="stylesheet" type="text/css" href="{webroot}lib/uploader/css/webuploader.css" />
+    <link rel="stylesheet" type="text/css" href="{webroot}lib/uploader/css/style.css" />
+    <script src="{webroot}lib/js/jquery.js"></script>
+    <script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+    <script src="{webroot}lib/tips/jquery.tips.js"></script>
+</head>
+<body>
+
+    <div id="wrapper">
+    
+        <div id="container">
+            <div id="uploader">
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div><div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>或将文件拖到这里，最多上传<span id="minlimit"></span>个文件</p>
+                        <div id="tips"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="filelist"></div>
+        </div>
+
+    </div>
+
+    <script>
+	var webroot="{webroot}";
+	var up_max={asp clng(sdcms[upmaxsize]/1024)};
+	var up_type="{asp replace(uptype,"|",",")}";
+	var up_limit={limit};
+	var up_server="sd_upload.asp?action=swf&filetype={filetype}&admin_id={adminid}&cid={cid}&classid={classid}&loginbase={admin_loginbase}&loginkey={admin_loginkey}";
+	var up_max_width={up_max_width};
+	var up_max_height={up_max_height};
+	var up_compress={compress};
+    </script>
+    <script src="{webroot}lib/uploader/js/webuploader.js"></script>
+    <script src="{webroot}lib/uploader/js/upload.js"></script>
+</body>
+</html>

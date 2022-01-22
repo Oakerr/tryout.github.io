@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?act=strategy">积分策略</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_li">
+                    <div class="form_txt">会员注册获得积分：</div>
+                    <div class="form_input"><input type="text" name="t0" size="10" maxlength="10" class="ip" value="{userdata(0,0)}" /></div>
+                </div>
+                <div class="form_li" >
+                    <div class="form_txt">会员每天登录获得积分（每天仅一次）：</div>
+                    <div class="form_input">
+                    <input type="text" name="t1" size="10" maxlength="10" class="ip" value="{userdata(0,1)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">会员投稿通过审核后获得积分：</div>
+                    <div class="form_input">
+                    <input type="text" name="t2" size="10" maxlength="10" class="ip" value="{userdata(0,2)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">会员通过邮箱激活后获得积分：</div>
+                    <div class="form_input">
+                    <input type="text" name="t3" size="10" maxlength="10" class="ip" value="{userdata(0,3)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">积分兑换比例（1元人民币可以兑换多少积分）：</div>
+                    <div class="form_input">
+                    <input type="text" name="t4" size="10" maxlength="10" class="ip" value="{userdata(0,4)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">邀请其他用户注册成功后获得积分：</div>
+                    <div class="form_input">
+                    <input type="text" name="t5" size="10" maxlength="10" class="ip" value="{userdata(0,5)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">消费赠送积分（消费1元人民币可以获得多少积分）：</div>
+                    <div class="form_input">
+                    <input type="text" name="t8" size="10" maxlength="10" class="ip" value="{userdata(0,8)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">VIP会员包月价格（单位：元）：</div>
+                    <div class="form_input">
+                    <input type="text" name="t6" size="10" maxlength="5" class="ip" value="{userdata(0,6)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">VIP会员包年价格（单位：元）：</div>
+                    <div class="form_input">
+                    <input type="text" name="t7" size="10" maxlength="10" class="ip" value="{userdata(0,7)}" />
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=strategydb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=strategy'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?">管理员管理</a> > <a href="?act=add">添加管理员</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">用户名：</div>
+                    <div class="form_input"><input type="text" name="t0" size="30" maxlength="20" class="ip" data-rule="用户名:required;" /><span>保存后，不可修改</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">密码：</div>
+                    <div class="form_input"><input type="text" name="t1" size="30" maxlength="20" class="ip" data-rule="密码:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">笔名：</div>
+                    <div class="form_input"><input type="text" name="t4" size="30" maxlength="20" class="ip" data-rule="笔名:required;" /><span>用于发布内容处的作者</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">状态：</div>
+                    <div class="form_input"><input type="radio" name="t2" value="0" id="t2_0" /><label for="t2_0">锁定</label><input type="radio" name="t2" value="1" id="t2_1" checked="checked" /><label for="t2_1">正常</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">所属角色：</div>
+                    <div class="form_input"><select name="t3" class="ip" data-rule="所属角色:required;">
+           <option value="">请选择</option>
+           <option value="0">超级管理员</option>
+           {sdcms:rs top="0" table="sd_admin_group"}
+           <option value="{$rs[id]}">{$rs[groupname]}</option>
+           {/sdcms:rs}
+           </select></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

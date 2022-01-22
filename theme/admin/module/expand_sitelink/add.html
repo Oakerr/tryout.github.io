@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">内链管理</a> > <a href="?act=add">添加内链</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">链接名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" maxlength="50" class="ip" data-rule="链接名称:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">链接描述：</div>
+                    <div class="form_input"><input type="text" name="t1" size="50" maxlength="255" class="ip" />　<span>关键字的title属性</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">链接网址：</div>
+                    <div class="form_input"><input type="text" name="t2" size="50" maxlength="255" class="ip" data-rule="链接网址:required;" />　<span>外部网址请以"http://"开头</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">替换次数：</div>
+                    <div class="form_input"><input type="text" name="t3" size="50" maxlength="10" class="ip" />　<span>为0时替换全部</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">优先级别：</div>
+                    <div class="form_input"><input type="text" name="t4" size="50" maxlength="10" class="ip" />　<span>数字越大越优先</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">属性设置：</div>
+                    <div class="form_input"><input type="checkbox" name="t5" id="t5" value="1" checked="checked" /><label for="t5">新窗口打开</label>
+           <input type="checkbox" name="t6" id="t6" value="1" checked="checked" /><label for="t6">通过审核</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?"',1000);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

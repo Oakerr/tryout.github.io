@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".form_txt input").click(function(){
+		var id=$(this).attr("id");
+		var result;
+		$(this).attr("checked") ? result=true:result=false
+		$("."+id).attr("checked",result);
+	})
+	$(".form_input input").click(function(){
+		var config=$(this).attr("config");
+		var t1="";
+		$("."+config).each(function(i){
+			if($(this).attr("checked"))
+			{
+				t1+=$(this).val()+",";
+			}
+		})
+		if(t1!=""){$("#"+config).attr("checked","checked");}else{$("#"+config).attr("checked","");}
+	})
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=group">角色管理</a> > <a href="?act=editlever&id={id}">页面权限</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">全部选择：</div>
+                    <div class="form_input"><input type="checkbox" name="chkall" style="border:0;background:none;width:auto;height:auto;margin:0 0 0 5px;" onClick="checkall(this.form)" title="全选/取消" id="all" /><label for="all" style="font-size:14px;margin:0 0 0 5px;color:#06f;">全选/取消</label></div>
+                </div>
+                {sdcms:rs top="0" table="sd_admin_group" where="id=[id]"}
+                {dim pagelever:pagelever=","&$rs[pagelever]&","}
+                {/sdcms:rs}
+                {sdcms:rp top="0" table="sd_admin_menu" where="followid=0 and islock=1"}
+                {dim followid:followid=$rp[id]}
+                <div class="form_group">
+                    <div class="form_txt"><input type="checkbox" value="{$rp[menuid]}" name="t0" id="t0_{$rp[menuid]}" {if instr(pagelever,","&$rp[menuid]&",")>0}checked{/if}><label for="t0_{$rp[menuid]}" style="font-size:14px;">{$rp[title]}</label></div>
+                    <div class="form_input">
+                    {sdcms:rs top="0" table="sd_admin_menu" where="followid=[followid] and islock=1" order="ordnum,id"}<input type="checkbox" value="{$rs[menuid]}" name="t0" id="t0_{$rs[menuid]}" class="t0_{$rp[menuid]}" config="t0_{$rp[menuid]}"  {if instr(pagelever,","&$rs[menuid]&",")>0}checked{/if}><label for="t0_{$rs[menuid]}">{$rs[title]}</label>
+           {/sdcms:rs}
+                    </div>
+                </div>
+                
+                {/sdcms:rp}
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=editleverdb&id={id}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=group'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

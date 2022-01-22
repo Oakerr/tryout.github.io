@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function()
+{
+	$("#clear").click(function()
+		{
+			if(confirm("\u786e\u5b9a\u8981\u6e05\u9664\u7f13\u5b58\uff1f"))
+			{
+				$.ajax(
+				{
+					type:"post",
+					cache:false,
+					url:"?act=clear",
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u6e05\u7406\u6210\u529f"});
+								setTimeout("location.href='?'",1500);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+				})
+			}
+		}
+	)
+	//
+	$("#cleartemp").click(function()
+		{
+			if(confirm("\u786e\u5b9a\u8981\u6e05\u9664\u7f13\u5b58\uff1f"))
+			{
+				$.ajax(
+				{
+					type:"post",
+					cache:false,
+					url:"?act=cleartemp",
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u6e05\u7406\u6210\u529f"});
+								setTimeout("location.href='?'",1500);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+				})
+			}
+		}
+	)
+	//
+	
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：<a href="?">缓存管理</a></div>
+    <div class="right_body">
+        <div class="table_form">
+                <div class="form_group">
+                    <div class="form_txt">内存缓存：</div>
+                    <div class="form_input"><%if application.contents.count>2 then%><div style="padding:5px 0;">共有内存缓存：<%=application.contents.count-2%> 个</div><input type="button" class="bnt_save" value="清理缓存" id="clear" ><%else%>没有缓存<%end if%></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">模板缓存：</div>
+                    <div class="form_input"><%if sdcms.isfolder("../cache/") then%><input type="button" class="bnt_save" id="cleartemp" value="清理缓存"><%else%>没有缓存<%end if%></div>
+                </div>
+                
+        </div>
+    </div>
+</div>
+</body>
+</html>

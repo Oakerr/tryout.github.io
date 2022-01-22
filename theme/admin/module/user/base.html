@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?act=list">会员管理</a> > <a href="?act=base&id={id}&page={page}&sta={sta}&nat={nat}&order={order}&keyword={keyword}">编辑资料</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            {sdcms:rs top="1" table="sd_user_data" where="userid=[id]"}
+            {rs:eof}
+			<script>
+			dialog({
+				content:'该用户没有创建基本资料，无法编辑！！！',
+				cancel:false,
+				ok:function(){location.href="?act=list&sta={sta}&nat={nat}&order={order}&keyword={keyword}&page={page}";}
+			}).showModal();  
+           </script>{/rs:eof}
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">真实姓名：</div>
+                    <div class="form_input"><input name="u0" type="text" value="{$rs[truename]}" size="50" maxlength="4" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">性别：</div>
+                    <div class="form_input"><input type="radio" name="u1" id="u1_1" value="1" {if $rs[sex]=1}checked{/if} /><label for="u1_1">男</label>
+           <input type="radio" name="u1" id="u1_2" value="2" {if $rs[sex]=2}checked{/if} /><label for="u1_2">女</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">生日：</div>
+                    <div class="form_input"><input name="u2" type="text" value="{if $rs[birthday]<>"1753-1-1"}{$rs[birthday]}{/if}" size="50" maxlength="10" class="ip" />　<span>格式：{sdcms.getdate(now(),"-",1)}</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">QQ：</div>
+                    <div class="form_input"><input name="u3" type="text" value="{$rs[qq]}" size="50" maxlength="15" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">MSN：</div>
+                    <div class="form_input"><input name="u4" type="text" value="{$rs[msn]}" size="50" maxlength="50" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">手机：</div>
+                    <div class="form_input"><input name="u5" type="text" value="{$rs[mobile]}" size="50" maxlength="11" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">电话：</div>
+                    <div class="form_input"><input name="u6" type="text" value="{$rs[tel]}" size="50" maxlength="13" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">职业：</div>
+                    <div class="form_input"><input name="u7" type="text" value="{$rs[job]}" size="50" maxlength="10" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">邮编：</div>
+                    <div class="form_input"><input name="u8" type="text" value="{$rs[zipcode]}" size="50" maxlength="6" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">地址：</div>
+                    <div class="form_input"><input name="u9" type="text" value="{$rs[address]}" size="50" maxlength="255" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+            {/sdcms:rs}
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=basedb&id={id}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?act=list&sta={sta}&nat={nat}&order={order}&keyword={keyword}&page={page}"',1000);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

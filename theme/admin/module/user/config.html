@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+window.UEDITOR_HOME_URL="{webroot}";
+var editor_cid="";
+var editor_classid="";
+var editor_upload_root="";
+var editor_adminid="";
+var editor_loginbase="";
+var editor_loginkey="";
+</script>
+<script src="{webroot}lib/ueditor/editor_config.js"></script>
+<script src="{webroot}lib/ueditor/editor.js"></script>
+<script>
+$(function()
+{
+	UE.getEditor('t4',editorOption_other);
+	$("#t0_0").click(function(){$("#close").hide();});
+	$("#t0_1").click(function(){$("#close").show();});
+}
+)
+</script>
+{dim mailarr:mailarr=maildata(0,0)}
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > 会员设置 > <a href="?act=config">基本设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_li">
+                    <div class="form_bnt">
+                    <input type="button" value="基本设置" class="bnt_save" onClick="location.href='?act=config'">
+                    <input type="button" value="用户激活设置" class="bnt_normal" onClick="location.href='?act=config_active'">
+                    <input type="button" value="找回密码设置" class="bnt_normal" onClick="location.href='?act=config_pass'"></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">开放注册：</div>
+                    <div class="form_input"><input type="radio" name="t0" value="true" id="t0_0" {if userdata(0,0)}checked{/if} /><label for="t0_0">开放注册</label>
+           <input type="radio" name="t0" value="false" id="t0_1" {if not(userdata(0,0))}checked{/if} /><label for="t0_1">关闭注册</label></div>
+                </div>
+                <div class="form_li{if userdata(0,0)} dis{/if}" id="close" >
+                    <div class="form_txt">关闭系统原因：</div>
+                    <div class="form_input">
+                    <textarea name="t1" cols="60" rows="4" class="tt" data-rule="关闭系统原因:required;">{userdata(0,1)}</textarea>
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">用户注册需审核：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t2" value="1" id="t2_0" {if userdata(0,2)="1"}checked{/if} /><label for="t2_0">直接通过</label>
+           <input type="radio" name="t2" value="0" id="t2_1" {if userdata(0,2)="0"}checked{/if} {if len(mailarr)=0}disabled{/if} /><label for="t2_1">邮箱验证</label>
+           <input type="radio" name="t2" value="-1" id="t2_2" {if userdata(0,2)="-1"}checked{/if} /><label for="t2_2">管理员审核</label>
+           　<span>开启了邮件设置的组件才能使用"邮箱验证"</span>
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">禁止注册的用户名：</div>
+                    <div class="form_input">
+                    <input type="text" name="t3" size="50" value="{userdata(0,7)}" class="ip" />　<span>多个请用"|"隔开</span>
+                    </div>
+                </div>
+                 
+                <div class="form_li">
+                    <div class="form_txt">会员注册协议：</div>
+                    <div class="form_input">
+                    <textarea name="t4" id="t4" cols="39" rows="8" style="width:96%;">{userdata(0,8)}</textarea></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			UE.getEditor('t4').sync();
+			$("#t4").val(UE.getEditor('t4').getContent());
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=configdb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=config'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

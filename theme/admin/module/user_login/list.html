@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function()
+{
+	$(".install").click(
+		function()
+		{
+			var config=$(this).attr("config");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5b89\u88c5\u6b64\u5e94\u7528\u5417\uff1f\u003c\u0064\u0069\u0076\u0020\u0073\u0074\u0079\u006c\u0065\u003d\u0022\u0063\u006f\u006c\u006f\u0072\u003a\u0023\u0066\u0033\u0030\u003b\u0022\u003e\u5b89\u88c5\u540e\u8bf7\u914d\u7f6e\u76f8\u5173\u53c2\u6570\uff01\u003c\u002f\u0064\u0069\u0076\u003e',
+				ok:function(){
+					var url,data;
+					url='?act=install&config='+config;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:info});
+								setTimeout("location.href='?'",1500)
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			//
+		}
+	)
+	//
+	$(".uninstall").click(
+		function()
+		{
+			var config=$(this).attr("config");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5378\u8f7d\u6b64\u5e94\u7528\u5417\uff1f',
+				ok:function(){
+					var url,data;
+					url='?act=uninstall&config='+config;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:info});
+								setTimeout("location.href='?'",1500)
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			//
+		}
+	)
+	//
+}
+)
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?">快捷登录</a></div>
+    <div class="right_body">
+       
+        <div class="table_title">
+        应用列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th>应用名称</th>
+                    <th width="80">适用版本</th>
+                    <th width="120">应用作者</th>
+                    <th width="150">作者网站</th>
+                    <th width="80">启用</th>
+                    <th width="80">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            <%dim fso,fsofolder,fsocontent,fsocount%>
+            <%dim xml,title,versions,author,website%>
+            <%set fso=createobject("scripting.filesystemobject")%>
+            <%set fsofolder=fso.getfolder(server.mappath(""&webroot&"api/login/"))%>
+            <%set fsocontent=fsofolder.files%>
+            <%for each fsocount in fsofolder.subfolders%>
+            <%if sdcms.isfile(""&webroot&"api/login/"&fsocount.name&"/config.xml") then%>
+            <%set xml=server.createobject("microsoft.xmldom")%>
+            <%xml.async=false%>
+            <%xml.load(server.mappath(""&webroot&"api/login/"&fsocount.name&"/config.xml"))%>
+            <%title=xml.documentelement.childnodes(0).text%>
+            <%versions=xml.documentelement.childnodes(1).text%>
+            <%author=xml.documentelement.childnodes(2).text%>
+            <%website=xml.documentelement.childnodes(3).text%>
+            <%apiname=xml.documentelement.childnodes(4).text%>
+            <%apikey=xml.documentelement.childnodes(5).text%>
+            <tr>
+                <td class="txt_left"><%=title%></td>
+                <td><%=versions%></td>
+                <td><%=author%></td>
+                <td><a href="<%=website%>" target="_blank"><%=website%></a></td>
+                <td><%if sdcms.strlen(sdcms.getsys(apikey))>0 then%>是<%else%><span>否</span><%end if%></td>
+                <td>
+                <%if sdcms.strlen(sdcms.getsys(apikey))=0 then%><a href="javascript:;" config="<%=apikey%>" class="install">安装</a><%else%><a href="?act=set&id=<%=apikey%>&apiname=<%=server.urlencode(apiname)%>">配置</a>　<a href="javascript:;" config="<%=apikey%>" class="uninstall">卸载</a><%end if%>
+                </td>
+            </tr>
+            <%end if%>
+            <%next%>
+            <%set xml=nothing%>
+            <%set fsofolder=nothing%>
+            <%set fsocontent=nothing%>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

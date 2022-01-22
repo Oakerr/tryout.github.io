@@ -1,0 +1,8 @@
+.sdcms-colorpicker{background:#fff;border:1px solid #ccc;width:200px;padding:5px;z-index:9999;position:absolute;}
+.sdcms-colorpicker-topbar{height:27px;width:200px;}
+.sdcms-colorpicker-preview{height:20px;border:1px inset black;margin-left:1px;width:92px;float:left;}
+.sdcms-colorpicker-nocolor{float:right;margin-right:4px;font-size:12px;line-height:14px;height:14px;border:1px solid #333;padding:3px 5px;cursor:pointer;}
+.sdcms-colorpicker-no{float:right;margin-right:1px;font-size:12px;line-height:14px;height:14px;border:1px solid #333;padding:3px 5px;cursor:pointer;}
+.sdcms-colorpicker-tablefirstrow{height:30px;}
+.sdcms-colorpicker-colorcell{width:14px;height:14px;display:block;margin:0;cursor:pointer;_overflow:hidden;}
+.sdcms-colorpicker-colorcell:hover{width:14px;height:14px;margin:0;}

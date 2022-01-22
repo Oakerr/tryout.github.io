@@ -1,0 +1,15 @@
+RewriteEngine on
+#不允许的目录
+RewriteRule ^({admin}|plug|theme|lib|upfile|user|api|html)/(.*) /$1/$2 [NC,QSA,L]
+
+#重写index.asp
+RewriteRule ^index/(\d+)/$ /index.asp?page=$1 [NC,QSA,L]
+RewriteRule ^index/$ /index.asp?page=1 [NC,QSA,L]
+
+#重写内容
+RewriteRule ^([\w\d\/-]*)/([\w\d-]*)_(\d+)\.html /show.asp\?root=$2&page=$3 [NC,QSA,L]
+RewriteRule ^([\w\d\/-]*)/(?!sd_)([\w\d-]*).html /show.asp\?root=$2 [NC,QSA,L]
+
+#重写列表
+RewriteRule ^([\w\d\/-]*)/(\d+)/$ /list.asp\?root=$1&page=$2 [NC,QSA,L]
+RewriteRule ^([\w\d\/-]*)/$ /list.asp\?root=$1

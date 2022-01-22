@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function()
+{
+	$(".aply").click(function()
+		{
+			var config=$(this).attr("config");
+			if(confirm("\u786e\u5b9a\u8981\u5e94\u7528\u6b64\u6a21\u677f\uff1f"))
+			{
+				$.ajax(
+				{
+					type:"post",
+					cache:false,
+					url:"?act=aply",
+					data:"t0="+config,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5e94\u7528\u6210\u529f"});
+								setTimeout("location.href='?'",1000);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+				})
+			}
+		}
+	)
+	//
+	
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：界面 > <a href="?">模板管理</a></div>
+    <div class="right_body">       
+        <div class="table_title">
+        模板列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="130">缩略图</th>
+                    <th>模板信息</th>
+                    <th width="80">是否应用</th>
+                    <th width="100">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            <%dim fso,fsofolder,fsocontent,fsocount%>
+            <%dim xml,title,versions,author,website,photo%>
+            <%set fso=createobject("scripting.filesystemobject")%>
+            <%set fsofolder=fso.getfolder(server.mappath(""&webroot&"theme/"))%>
+            <%set fsocontent=fsofolder.files%>
+            <%for each fsocount in fsofolder.subfolders%>
+            <%if sdcms.isfile(""&webroot&"theme/"&fsocount.name&"/config.xml") then%>
+            <%set xml=server.createobject("microsoft.xmldom")%>
+            <%xml.async=false%>
+            <%xml.load(server.mappath(""&webroot&"theme/"&fsocount.name&"/config.xml"))%>
+            <%title=xml.documentelement.childnodes(0).text%>
+            <%versions=xml.documentelement.childnodes(1).text%>
+            <%author=xml.documentelement.childnodes(2).text%>
+            <%website=xml.documentelement.childnodes(3).text%>
+            <%photo=""&webroot&"theme/"&fsocount.name&"/"&xml.documentelement.childnodes(4).text%>
+            <%if fsocount.name<>"admin" then%>
+            <tr>
+                <td><img src="<%=photo%>" width="120" height="100" /></td>
+                <td class="txt_left"><strong>模板名称：</strong><%=title%><br>
+                    <strong>适合版本：</strong><%=versions%><br>                    
+                    <strong>模板作者：</strong><%=author%><br>                    
+                    <strong>作者网站：</strong><a href="<%=website%>" target="_blank"><%=website%></a></td>
+                <td><%if theme_root=fsocount.name then%>是<%else%><span>否</span><%end if%></td>
+                <td>
+                <%if theme_root<>fsocount.name then%><a href="javascript:;" config="<%=fsocount.name%>" class="aply">应用模板</a><br><%end if%><a href="?act=list&folder=<%=fsocount.name%>">管理模板</a><!--<br><a href="#">导出模板</a>-->
+                </td>
+            </tr>
+            <%end if%>
+            <%end if%>
+            <%next%>
+            <%set xml=nothing%>
+            <%set fsofolder=nothing%>
+            <%set fsocontent=nothing%>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

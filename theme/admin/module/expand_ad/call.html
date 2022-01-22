@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function()
+{
+	var html=$("#content").val();
+	html=html.replace("plug","webroot}plug");
+	html=html.replace("webroot","{webroot");
+	$("#content").val(html);
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">广告管理</a> > <a href="?act=call&id={id}">调用代码</a></div>
+    <div class="right_body">
+        <div class="table_form">
+                <div class="form_group">
+                    <div class="form_txt">广告名称：</div>
+                    <div class="form_input">{datadb(0,0)}</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">调用代码：</div>
+                    <div class="form_input"><textarea id="content" rows="4" style="width:96%;" class="tt"><script src="plug/ad.asp?id={id}"></script></textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">效果预览：</div>
+                    <div class="form_input">{if thisdata>=datadb(12,0) and thisdata<=datadb(13,0)}{datadb(11,0)}{else}{datadb(14,0)}(广告位已过期){/if}</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

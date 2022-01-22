@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理首页</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".qqbind").click(function(){
+		top.dialog({
+			title:"绑定QQ",
+			content:'\u786e\u5b9a\u8981\u7ed1\u5b9a\u0051\u0051\u0028\u5b9e\u73b0\u4e00\u952e\u767b\u5f55\u540e\u53f0\u0029\uff1f',
+			ok:function(){parent.parent.location.href="api/api.asp";},
+			cancel:true 
+		}).showModal();
+		})
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：管理首页</div>
+    <div class="right_body">
+
+                
+        <div class="row-fluid">
+             <div class="span5">
+                 <div class="box_subject">用户信息</div>
+                 <div class="box_body mt15">
+                     {sdcms:rs table="sd_admin" where="adminid=[adminid]"}
+                      <ul class="userinfo">
+                          <li>您好：<span>{$rs[adminname]}</span>{if sdcms.strlen(sdcms.getsys("qq.login"))>0}{if sdcms.strlen($rs[openid])=0}　<a href="javascript:;" class="qqbind">【绑定QQ】</a>{/if}{/if}</li>
+                          <li>您已登录：{$rs[logintimes]} 次</li>
+                          <li>最后登录IP：{$rs[lastloginip]}</li>
+                          <li>最后登录日期：{replace($rs[lastlogindate],"/","-")}</li>
+                      </ul>
+                      {/sdcms:rs}
+                      <span id="tips" class="dis"></span>        
+                 </div>
+
+             </div>  
+        </div>
+    </div>
+</div>
+<script>$(function(){get_tips();Get_Notice(0,"notice");Get_Notice(1,"nice");})</script>
+</body>
+</html>

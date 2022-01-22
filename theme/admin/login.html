@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit">
+<title>登录页面</title>
+<link href="{webroot}theme/admin/css/login.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<style>.msg-wrap{margin-left:50px;}{if not(verify_code)}#login .main form{margin-top:70px;}#login .main form ul li{margin-bottom:27px;}{/if}</style>
+</head>
+
+<body>
+<div id="login">
+        <div class="logo"></div>
+        <div class="main">
+            <form class="formname" method="post">
+            <ul>
+                <li>用户名： <input name="t0" type="text" class="wa" id="t0" maxlength="20" data-rule="用户名:required;" /><i class="iconfont">&#xe60d;</i></li>
+                <li>密　码： <input name="t1" type="password" class="wa" id="t1" maxlength="20" data-rule="密码:required;" /><i class="iconfont">&#xe605;</i></li>
+                {if verify_code}<li>验证码： <input name="t2" type="text" class="wb" id="t2" maxlength="4" data-rule="验证码:required;" />　<img src="{webroot}lib/imgcode.asp?t0=60&t1=14" title="看不清楚？点击刷新！" onClick="this.src+='&'+Math.random();" /><i class="iconfont">&#xe61a;</i></li>{/if}
+                <li><input type="submit" value="登 录" class="bnt" /></li>
+            </ul>
+            </form>
+            {if s>0}<div class="api iconfont">&#xe616;<a href="api/api.asp">一键登录</a></div>{/if}
+    </div>
+    <div class="copyright"><a href="http://www.sdcms.cn" target="_blank">Powered By Sdcms.Cn</a><br>建议在1280*1024分辨率下使用</div>
+</div>
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$('.bnt').attr('value','登录中…');
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=check",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='./'",1500);}
+					else
+					{$('.bnt').attr('value','登 录');$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+{if t=1}$.fn.tips({content:"\u8d44\u6599\u9519\u8bef\uff0c\u65e0\u6cd5\u767b\u5f55\u540e\u53f0\uff01"});{/if}
+if(self!=top){top.location=self.location;}
+</script>
+
+</body>
+</html>

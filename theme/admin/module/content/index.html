@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.vtip.css" rel="stylesheet" type="text/css">
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：内容 > 内容管理 > <a href="?act=list">内容列表</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <div class="search"><form action="?" method="get" onSubmit="return checksearch(this)"><input type="hidden" name="act" value="list"><input type="text" name="keyword" class="ip" value="请输入关键字" onFocus="if(this.value==defaultValue)this.value=''" onBlur="if(this.value=='')this.value=defaultValue" /><input type="submit" class="bnt" value="查询" /></form></div>
+            <ul>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{statitle}</a><dl>
+                <dt><a href="?act=list&sta=0">全部</a></dt>
+                <dt><a href="?act=list&sta=1">已发</a></dt>
+                <dt><a href="?act=list&sta=2">草稿</a></dt>
+            </dl></li>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{nattitle}</a><dl>
+                <dt><a href="?act=list&nat=0">全部</a></dt>
+                <dt><a href="?act=list&nat=1">有缩略图</a></dt>
+                <dt><a href="?act=list&nat=2">无缩略图</a></dt>
+                <dt><a href="?act=list&nat=3">已推荐</a></dt>
+                <dt><a href="?act=list&nat=4">未推荐</a></dt>
+                <dt><a href="?act=list&nat=5">已置顶</a></dt>
+                <dt><a href="?act=list&nat=6">未置顶</a></dt>
+                <dt><a href="?act=list&nat=7">允许评论</a></dt>
+                <dt><a href="?act=list&nat=8">禁止评论</a></dt>
+                <dt><a href="?act=list&nat=9">外部链接</a></dt>          
+            </dl></li>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{ordtitle}</a><dl>
+                <dt><a href="?act=list&order=0">正常排序</a></dt>
+                <dt><a href="?act=list&order=1">访问人气↑</a></dt>
+                <dt><a href="?act=list&order=2">访问人气↓</a></dt>
+                <dt><a href="?act=list&order=3">发表日期↑</a></dt>
+                <dt><a href="?act=list&order=4">发表日期↓</a></dt>
+                <dt><a href="?act=list&order=5">评论数量↑</a></dt>
+                <dt><a href="?act=list&order=6">评论数量↓</a></dt>      
+            </dl></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        内容列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="60">ID</th>
+                    <th>标题</th>
+                    <th width="140">栏目</th>
+                    <th width="40">人气</th>
+                    <th width="40">积分</th>
+                    <th width="40">缩图</th>
+                    <th width="40">发布</th>
+                    <th width="40">推荐</th>
+                    <th width="40">置顶</th>
+                    <th width="40">评论</th>
+                    <th width="40">外链</th>
+                    <th width="40">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,comments,createdate,lastupdate,isurl,url,style,title,hits,point,ispic,sd_content.islock,isnice,ontop,iscomment,classid,adminurl,catename" table="sd_content" join="left join view_category on sd_content.classid=view_category.cateid" where="sd_content.islock>=0[sqlwhere][wherekey]" order="[orderby]" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="12">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr>
+                <td>{$rs[id]}</td>
+                <td title="编号：{$rs[id]}<br>评论：{$rs[comments]}<br>发布：{$rs[createdate]}<br>更新：{$rs[lastupdate]}" class="vtip txt_left"><a href="{if $rs[isurl]=0}../show.asp?id={$rs[id]}{else}{$rs[url]}{/if}" target="_blank" {$rs[style]}>{$rs[title]}</a></td>
+                <td><a href="?act=list&classid={$rs[classid]}">{$rs[catename]}</a></td>
+                <td>{$rs[hits]}</td>
+                <td>{$rs[point]}</td>
+                <td>{sdcms.iif($rs[ispic]=0,"<span>否</span>","是")}</td>
+                <td>{sdcms.iif($rs[islock]=0,"<span>否</span>","是")}</td>
+                <td>{sdcms.iif($rs[isnice]=0,"<span>否</span>","是")}</td>
+                <td>{sdcms.iif($rs[ontop]=0,"<span>否</span>","是")}</td>
+                <td>{sdcms.iif($rs[iscomment]=0,"<span>禁止</span>",$rs[comments])}</td>
+                <td>{sdcms.iif($rs[isurl]=0,"<span>否</span>","是")}</td>
+                <td><a href="{if $rs[isurl]=0}{$rs[adminurl]}{else}?classid={/if}{$rs[classid]}&act=edit&id={$rs[id]}">编辑</a></td>
+            </tr>
+            {/sdcms:rs}                           
+            </tbody>
+        </table>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

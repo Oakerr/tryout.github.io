@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+function getfield(t0)
+{
+	$.ajax({
+	type: "get",
+	cache:false,
+	url:"?act=load&t0="+escape(t0),
+	error:function(){},
+	success: function(_){$('#sdcms').html(_);}
+	});
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：插件 > <a href="?">内容替换插件</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post" action="index.asp?act=do" target="plug">
+                <div class="form_group">
+                    <div class="form_txt">数据表名：</div>
+                    <div class="form_input"><select name="t0" onChange="if(this.value!='')getfield(this.value)" class="ip" data-rule="数据表名:required;">
+                    <option value="">请选择</option>
+                    <option value="sd_content">sd_content</option>
+                    {sdcms:rs field="tablename" table="sd_model"}
+                    <option value="{$rs[tablename]}">{$rs[tablename]}</option>
+                    {/sdcms:rs}
+                </select></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">字段名：</div>
+                    <div class="form_input" id="sdcms"><select name="t1" class="ip"><option value="">请选择</option></select></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">替换数量：</div>
+                    <div class="form_input"><input name="t2" type="text" value="0" maxlength="5" class="ip">　<span>为0时替换全部</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">将字符：</div>
+                    <div class="form_input"><textarea name="t3" rows="5" style="width:96%;" class="tt" data-rule="将字符:required;"></textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">替换为：</div>
+                    <div class="form_input"><textarea name="t4" rows="5" style="width:96%;" class="tt"></textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="执行" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="table_form">
+                <div class="form_group">
+                    <div class="form_txt">处理进度：</div>
+                    <div class="form_input"><iframe src="about:blank" scrolling="auto" height="80" name="plug" frameborder="0" style="width:96%;border:1px solid #ddd;"></iframe></div>
+                </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

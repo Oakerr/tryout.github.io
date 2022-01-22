@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01\u003c\u0062\u0072\u003e\u5220\u9664\u540e\u672c\u7ec4\u4f1a\u5458\u8bbe\u7f6e\u4e3a\u4e0d\u5c5e\u4e8e\u4efb\u4f55\u7ec4',
+				ok:function(){
+					var url,data;
+					url='?act=groupdel&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+								$("#group_"+id).fadeOut('slow');
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})				
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?act=group">会员组管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="?act=groupadd"><span class="iconfont">&#xe618;</span>添加新会员组</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        会员组列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="40">ID</th>
+                    <th>名称</th>
+                    <th width="60">优惠率</th>
+                    <th width="80">所需积分</th>
+                    <th width="80">允许登录</th>
+                    <th width="120">允许投稿(数量)</th>
+                    <th width="80">允许升级</th>
+                    <th width="60">默认组</th>
+                    <th width="80">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {sdcms:rs top="0" table="sd_user_group" order="point,id"}
+            {rs:eof}
+            <tr>
+                <td colspan="9">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="group_{$rs[id]}">
+                <td>{$rs[id]}</td>
+                <td class="txt_left">{$rs[groupname]}</td>
+                <td>{$rs[rate]}%</td>
+                <td>{$rs[point]}</td>
+                <td>{if $rs[allowlogin]=1}是{else}<span>否</span>{/if}</td>
+                <td>{if $rs[allowpost]=1}是{else}<span>否</span>{/if}{if $rs[allowpost]=1} (<span>{if $rs[allowpostnum]=0}无限制{else}{$rs[allowpostnum]}{/if}</span>){/if}</td>
+                <td>{if $rs[allowupgrade]=1}是{else}<span>否</span>{/if}</td>
+                <td>{if $rs[isdefault]=1}是{else}<span>否</span>{/if}</td>
+                <td><a href="?act=groupedit&id={$rs[id]}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}
+        </table>
+    </div>
+</div>
+</body>
+</html>

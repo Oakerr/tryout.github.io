@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url,data;
+					url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:'error',content:info})
+								break;
+							case "1":
+								$.fn.tips({type:'ok',content:'\u5220\u9664\u6210\u529f'})
+								$("#admin_"+id).fadeOut('slow');
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal()
+		
+		})
+	
+	$(".bind").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u89e3\u9664\u7ed1\u5b9a\uff1f',
+				ok:function(){
+					var url,data;
+					url='?act=unbind&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "1":
+								$.fn.tips({type:'ok',content:info})
+								setTimeout("location.href='?'",1000);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})				
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?">管理员管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="?act=add"><span class="iconfont">&#xe618;</span>添加管理员</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        管理员列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="60">ID</th>
+                    <th>用户名</th>
+                    <th width="100">登录次数</th>
+                    <th width="150">最后登录日期</th>
+                    <th width="120">最后登录IP</th>
+                    {if s>0}<th width="80">绑定QQ</th>{/if}
+                    <th width="80">角色</th>
+                    <th width="60">状态</th>
+                    <th width="140">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+                {sdcms:rs top="0" field="adminid,adminname,logintimes,lastlogindate,lastloginip,openid,islock,groupid,sd_admin_group.groupname" table="sd_admin" join="left join sd_admin_group on sd_admin.groupid=sd_admin_group.id" order="adminid desc"}
+                <tr id="admin_{$rs[adminid]}">
+                    <td align="center">{$rs[adminid]}</td>
+                    <td>{$rs[adminname]}</td>
+                    <td align="center">{$rs[logintimes]}</td>
+                    <td align="center">{$rs[lastlogindate]}</td>
+                    <td align="center">{$rs[lastloginip]}</td>
+                    {if s>0}<td align="center">{if sdcms.strlen($rs[openid])=0}<span>否</span>{else}是{/if}</td>{/if}
+                    <td align="center">{if $rs[groupid]=0}超级管理员{else}{$rs[groupname]}{/if}</td>
+                    <td align="center">{sdcms.iif($rs[islock]=0,"<span>锁定</span>","正常")}</td>
+                    <td align="center">{if s>0}{if sdcms.strlen($rs[openid])>0}<a href="javascript:;" class="bind" rel="{$rs[adminid]}">解除绑定</a>　{/if}{/if}<a href="?act=edit&id={$rs[adminid]}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[adminid]}">删除</a></td>
+                </tr>
+            {/sdcms:rs}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

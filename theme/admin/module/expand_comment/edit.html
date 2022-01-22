@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">评论管理</a> > <a href="?act=edit&id={id}&page={page}&nat={nat}&cid={cid}">查看/回复评论</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">昵称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" maxlength="50" class="ip" value="{datadb(0,0)}"  data-rule="昵称:required;" {if datadb(4,0)<>0}readonly{/if} /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">评论内容：</div>
+                    <div class="form_input"><textarea name="t1" cols="60" rows="6" class="tt" data-rule="评论内容:required;"  onKeyUp="strlen_verify(this,'t1_len',255)">{datadb(1,0)}</textarea>　还可输入<span id="t1_len">{asp (255-sdcms.strlen(datadb(1,0)))}</span> 个字符</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">管理回复：</div>
+                    <div class="form_input"><textarea name="t2" cols="60" rows="6" class="tt" onKeyUp="strlen_verify(this,'t2_len',255)">{datadb(2,0)}</textarea>　还可输入<span id="t2_len">{asp (255-sdcms.strlen(datadb(2,0)))}</span> 个字符，可以为空</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">管理操作：</div>
+                    <div class="form_input"><input type="checkbox" name="t3" id="t3" value="1" {if 1=datadb(3,0)} checked="checked"{/if}  /><label for="t3">通过审核</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=editdb&id={id}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){
+						setTimeout("location.href='?page={page}&nat={nat}&cid={cid}'",1000);
+					}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

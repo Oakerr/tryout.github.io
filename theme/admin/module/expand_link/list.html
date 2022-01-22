@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#link_"+id).fadeOut('slow');
+							setTimeout('location.href="?page={page}&nat={nat}&classid={classid}"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+	
+	//批量删除
+	$(".delsome").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=delsome&id='+idarr;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+								var idnum;
+								idnum=idarr.split(",")
+								for(i=0;i<=idnum.length;i++)
+								{
+									$("#link_"+idnum[i]).fadeOut('slow');
+								}
+								setTimeout('location.href="?page={page}&nat={nat}&classid={classid}"',1000);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		//批量移动
+		$(".move").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				var html="";
+				html+='<dl class="move">';
+				html+='  <dt><b>目标类别：</b><select name="go" id="go">';
+				html+='<option value="0">不设置类别</option>';
+				html+='{get_class}';
+				html+='</select></dt>';
+				html+='</dl>';
+				top.dialog({
+					title:'批量移动',
+					content:html,
+					ok:function(){
+						var t0=top.$("#go")[0].value;
+						if(t0=="")
+						{
+							alert("\u4e0d\u80fd\u79fb\u52a8\u5230\u5f53\u524d\u680f\u76ee");
+							return false
+						}
+						var url='?act=move&id='+idarr+'&go='+t0;
+						$.ajax({
+						type:"get",
+						cache:false,
+						url:url,
+						success:function(_)
+						{
+							var act=_.substring(0,1);
+							var info=_.substring(1);
+							switch(act)
+							{
+								case "0":
+									$.fn.tips({type:"error",content:info});
+									break;
+								case "1":
+									$.fn.tips({type:"ok",content:"\u79fb\u52a8\u6210\u529f"});
+									setTimeout('location.href="?page={page}&nat={nat}&classid={classid}"',1000);
+									break;
+								default:
+									alert(_);
+									break;
+							}
+						}
+						});
+										
+						},
+					cancel:true 
+				}).showModal();
+
+			}
+		})
+		//按类别移动
+		$(".movecate").click(function(){
+			var html="";
+			html+='<dl class="movecate">';
+			html+='<dt><b>来源类别：</b><select name="comecate" id="comecate"><option value="0">不设置类别</option>{get_class}</select><div>两者不能一致</div></dt>';
+			html+='<dt><b>目标类别：</b><select name="gocate" id="gocate"><option value="0">不设置类别</option>{get_class}</select></dt>';
+			html+='</dl>';
+			top.dialog({
+				title:'按类别移动',
+				content:html,
+				ok:function(){
+					var t0=top.$("#comecate")[0].value;
+					var t1=top.$("#gocate")[0].value;
+					if(t0==t1)
+					{
+						alert("\u6765\u6e90\u7c7b\u522b\u4e0d\u80fd\u548c\u76ee\u6807\u7c7b\u522b\u4e00\u81f4");
+						return false
+					}
+					var url='?act=movecate&comecate='+t0+'&gocate='+t1;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						var act=_.substring(0,1);
+						var info=_.substring(1);
+						switch(act)
+						{
+							case "0":
+								$.fn.tips({type:"error",content:info});
+								break;
+							case "1":
+								$.fn.tips({type:"ok",content:"\u79fb\u52a8\u6210\u529f"});
+								setTimeout('location.href="?"',1500);
+								break;
+							default:
+								alert(_);
+								break;
+						}
+					}
+					});
+										
+				},
+				cancel:true 
+			}).showModal();
+		})
+		$(".islock").click(function(){doset("islock");})
+		$(".nolock").click(function(){doset("nolock");})			
+})
+
+function doset(t0)
+{
+	var arrchk=$("input[name='id']:checked");
+	var idarr="";
+	$(arrchk).each(function(){
+		if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+	}); 
+	if(idarr=="")
+	{
+		$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+	}
+	else
+	{
+		var url='?act=doset&go='+t0+'&id='+idarr;
+		$.ajax({
+		type:"get",
+		cache:false,
+		url:url,
+		success:function(_)
+		{
+			if(_.substring(0,1)==0)
+			{
+				$.fn.tips({type:"error",content:_.substring(1)});
+			}
+			else
+			{
+				location.href="?page={page}&nat={nat}&classid={classid}";
+			}
+		}
+		});
+	}
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">友情链接</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <select onChange="location.href='?classid='+this.value">
+                <option value="-1">按类别管理</option>
+                <option value="0" {if classid=0}selected{/if}>未分类</option>
+                {sdcms:rs table="sd_expand_class" where="followid=1" order="ordnum,classid"}
+                <option value="{$rs[classid]}" {if $rs[classid]=classid}selected{/if}>{$rs[classname]}</option>
+                {/sdcms:rs}
+            </select>
+            <ul>
+                <li><a href="?act=add"><span class="iconfont">&#xe618;</span>添加链接</a></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="nolock">通过审核</a></dt>
+                    <dt><a href="javascript:;" class="islock">取消审核</a></dt>
+                    <dt><a href="javascript:;" class="delsome">批量删除</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>移动链接↓</a><dl>
+                    <dt><a href="javascript:;" class="move">批量移动</a></dt>
+                    <dt><a href="javascript:;" class="movecate">按类别移动</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{nattitle}</a><dl>
+                    <dt><a href="?nat=1">未审</a></dt>
+                    <dt><a href="?nat=2">已审</a></dt>
+                    <dt><a href="?nat=3">文字链接</a></dt>
+                    <dt><a href="?nat=4">图片链接</a></dt>
+                </dl></li>
+                <li><a href="sd_expand_class.asp?followid=1"><span class="iconfont">&#xe61b;</span>链接类别管理</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        友情链接
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>网站名称</th>
+                    <th width="200">所属类别</th>
+                    <th width="80">链接类型</th>
+                    <th width="80">是否审核</th>
+                    <th width="80">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,webname,weburl,islogo,islock,classname,sd_expand_link.classid" table="sd_expand_link" join="left join sd_expand_class on sd_expand_link.classid=sd_expand_class.classid" where="1=1 [sqlwhere]" order="id desc" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="6">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="link_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td class="txt_left"><a href="{$rs[weburl]}" target="_blank">{$rs[webname]}</a></td>
+                <td>{if len($rs[classname])>0}<a href="?classid={$rs[classid]}">{$rs[classname]}({$rs[classid]})</a>{/if}</td>
+                <td>{sdcms.iif($rs[islogo]=0,"<span>文字链接</span>","图片链接")}</td>
+                <td>{sdcms.iif($rs[islock]=0,"<span>未审</span>","已审")}</td>
+                <td><a href="?act=edit&id={$rs[id]}&page={page}&nat={nat}&classid={classid}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

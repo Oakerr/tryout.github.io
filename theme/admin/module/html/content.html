@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：生成 > <a href="?act=content">生成内容</a></div>
+    <div class="right_body">
+        <div class="row-fluid">
+             <div class="span4" style="_margin-left:2.127659574468085%;">
+                 <div class="box_subject">按类别生成</div>
+                 <div class="box_body mt15">
+
+                 <div class="table_form">
+                    <form class="form_category" method="post">
+                        <div class="form_group">
+                            <div class="form_txt">栏目选择：</div>
+                            <div class="form_input">
+                            <select name="t0" class="ip">
+                                <option value="0">全部</option>
+                                {sdcms.get_cateoption(0,2)}
+                            </select> <input name="t1" type="checkbox" id="t1" value="1" checked><label for="t1">包含子类</label>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_txt">每轮生成：</div>
+                            <div class="form_input">
+                            <input name="t2" type="text" value="100" maxlength="4" class="ip" style="width:60px;">条
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_input"><input type="submit" value="开始生成" class="bnt_save"></div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+             
+             </div>
+             <div class="span4" style="_margin-left:2.127659574468085%;">
+                 <div class="box_subject">按时间生成</div>
+                 <div class="box_body mt15">
+                 
+                 <div class="table_form">
+                    <form class="form_date" method="post">
+                        <div class="form_group">
+                            <div class="form_txt">时间范围：</div>
+                            <div class="form_input">
+                            <select name="t0" class="ip">
+                            <option value="0">不限</option>
+                            <option value="1">今日</option>
+                            <option value="2">昨日</option>
+                            <option value="3">本周</option>
+                            <option value="4">本月</option>
+                        </select>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_txt">每轮生成：</div>
+                            <div class="form_input">
+                            <input name="t1" type="text" value="100" maxlength="4" class="ip" style="width:60px;">条</span>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_input"><input type="submit" value="开始生成" class="bnt_save"></div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+
+             </div>
+             
+             <div class="span4">
+                 <div class="box_subject">按ID生成</div>
+                 <div class="box_body mt15">
+                 
+                 <div class="table_form">
+                    <form class="form_id" method="post">
+                        <div class="form_group">
+                            <div class="form_txt">ID范围：</div>
+                            <div class="form_input">
+                            <input name="t0" type="text" maxlength="5" class="ip" style="width:50px;"> 至　<input name="t1" type="text" maxlength="5" class="ip" style="width:50px;">
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_txt">每轮生成：</div>
+                            <div class="form_input">
+                            <input name="t2" type="text" value="100" maxlength="4" class="ip" style="width:60px;">条</span>
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <div class="form_input"><input type="submit" value="开始生成" class="bnt_save"></div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+
+             </div>
+             
+             
+         </div>
+
+        <div class="table_form">
+            <div class="form_group">
+                <div class="form_txt">生成进度：</div>
+                <div class="form_input">
+                    <div id="create_staus"><div id="create_percent">0%</div></div>
+                    <div id="create_text">待生成</div>
+                </div>
+            </div>
+            
+            <div class="form_group dis" id="show">
+                <div class="form_txt">详细进度：</div>
+                <div class="form_input">
+                    <div id="idarr" style="height:120px;overflow:auto;margin:10px;"></div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+<script>
+$(".form_category").validator(
+{
+	stopOnError:true,
+	theme:'yellow_top',
+	ignore:':hidden',
+	valid:function(form)
+	{
+		get_arr($(form).serialize(),0,"html_content_category");
+	}
+});
+
+$(".form_date").validator(
+{
+	stopOnError:true,
+	theme:'yellow_top',
+	ignore:':hidden',
+	valid:function(form)
+	{
+		get_arr($(form).serialize(),0,"html_content_date");
+	}
+});
+
+$(".form_id").validator(
+{
+	stopOnError:true,
+	theme:'yellow_top',
+	ignore:':hidden',
+	valid:function(form)
+	{
+		get_arr($(form).serialize(),0,"html_content_id");
+	}
+});
+
+function get_arr(db,t0,t1)
+{
+	$.fn.tips({type:'loading',content:'正在生成，请稍后'});
+	$("#show").css("display","block");
+	$.ajax(
+	{
+		url:"?act="+t1+"&lastid="+t0,
+		type:"post",
+		data:db,
+		error:function(e){alert(e);},
+		success:function(d){
+			$.fn.tips.close();
+			var act=d.substring(0,1);
+			var info=d.substring(1);
+			switch(act)
+			{
+				case "0":
+					$.fn.tips({content:info});
+					break;
+				case "1":
+				case "2":
+					var arr=info.split(",");
+					var lastid=arr[arr.length-1];
+					
+					for(i=0;i<arr.length;i++)
+					{
+						var result=false;
+						var wp=parseInt((i+1)/arr.length*100)+"%";
+						result=create_content(arr[i],1,wp);
+						if(result)
+						{
+						percent(wp,"Id=<span>"+arr[i]+"</span>生成完毕");
+						$("#idarr").html($("#idarr").html()+"ID=<span>"+arr[i]+"</span> 生成完毕<br>");
+						$("#idarr")[0].scrollTop=$("#idarr")[0].scrollHeight;
+						}
+					}
+					if(result)
+					{
+						if(act=="2")
+						{
+							percent("100%","生成完成");
+							$("#idarr").html($("#idarr").html()+" 全部生成完毕<br>");
+							$("#idarr")[0].scrollTop=$("#idarr")[0].scrollHeight;
+						}else
+						{
+							percent("100%","本次生成<span>"+(i)+"</span>个内容，稍后继续");
+							setTimeout(function(){get_arr(db,lastid,t1);},1000);
+						}
+					}
+					break
+				default:
+					alert(d);
+					break;
+			}
+		}
+	});
+}
+
+function percent(t0,t1)
+{
+	$("#create_percent").css("background","#91B6E5");
+	$("#create_percent").css("color","#fff");
+	$("#create_percent").css("width",t0);
+	$("#create_percent").html(t0);
+	$("#create_text").html(t1);
+}
+
+function create_content(id,page,pc)
+{
+	$.ajax({
+		url:"html/show.asp?admin_id={adminid}&loginbase={admin_loginbase}&loginkey={admin_loginkey}&id="+id+"&page="+page,
+		type:"post",
+		cache:false,
+		//async:false,
+		error:function(e){alert(e);},
+		success:function(d){
+			var total=d.substring(1);
+			if(page>=total)
+			{
+				//percent(pc,"Id=<span>"+id+"</span>生成完毕");
+			}
+			else
+			{
+				var w=parseInt(page/total*100)+"%";
+				var t="共<span>"+total+"</span>页，已生成<span>"+page+"</span>页";
+				//percent(w,t);
+				create_content(id,page+1,pc);
+				return false
+			}
+		}
+	});
+	return true;
+}
+
+</script>
+
+</body>
+</html>

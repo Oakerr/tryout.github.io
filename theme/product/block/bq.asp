@@ -1,0 +1,1 @@
+﻿<%if not in_sdcms then response.write("template load fail"):response.end() end if%>

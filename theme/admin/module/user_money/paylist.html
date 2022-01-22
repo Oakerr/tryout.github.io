@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url,data;
+					url='?act=delpay&id='+id+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#money_"+id).fadeOut('slow');
+							setTimeout('location.href="?act=paylist"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+	
+	$(".delfail").click(function(){
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url,data;
+					url='?act=delfail';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							setTimeout('location.href="?act=paylist"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+
+		$(".delsome").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url;
+					url='?act=delsome&id='+idarr+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							var idnum;
+							idnum=idarr.split(",")
+							for(i=0;i<=idnum.length;i++)
+							{
+								$("#money_"+idnum[i]).fadeOut('slow');
+							}
+							setTimeout('location.href="?act=paylist"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		
+		$(".delall").click(function(){
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url,data;
+					url='?act=delallpay';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							setTimeout('location.href="?act=paylist"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+		
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?">财务管理</a> > <a href="?act=paylist">充值记录</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="javascript:;" class="delsome"><span class="iconfont">&#xe617;</span>批量删除</a></li>
+                <li><a href="javascript:;" class="delfail"><span class="iconfont">&#xe60f;</span>清空失败</a></li>
+                <li><a href="javascript:;" class="delall"><span class="iconfont">&#xe60f;</span>清空全部</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        充值列表
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>名称|流水号</th>
+                    <th width="80">金额</th>
+                    <th width="80">接口</th>
+                    <th width="100">用户名</th>
+                    <th width="80">状态</th>
+                    <th width="150">日期</th>
+                    <th width="60">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {sdcms:rs field="id,orderid,amount,payway,(select username from sd_user where sd_user.id=sd_user_payrecord.userid) as username,createdate,isover,userid" table="sd_user_payrecord" order="id desc" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <tr>
+                <td colspan="8">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="money_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td class="txt_left">{$rs[orderid]}</td>
+                <td>{sdcms.getnum($rs[amount])}</td>
+                <td>{$rs[payway]}</td>
+                <td><a href="?userid={$rs[userid]}">{$rs[username]}</a></td>
+                <td>{if $rs[isover]=1}成功{else}<span>失败</span>{/if}</td>
+                <td>{$rs[createdate]}</td>
+                <td><a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

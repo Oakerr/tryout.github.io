@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<skin>
+	<Name Desc="插件名称">蜘蛛来访插件</Name>
+	<Version Desc="适用版本">2.0以上</Version>
+	<Author Desc="插件作者">IT平民</Author>
+	<Website Desc="网址"></Website>
+	<Plugkey Desc="唯一识别的插件key">sdcms.plug.spider</Plugkey>
+	<InstallSql Desc="安装的sql语句">CREATE TABLE [sd_plug_spider] ([ID] int IDENTITY (1, 1) PRIMARY KEY NOT NULL ,[spider] nvarchar (50) NULL,[hits] int NULL,[lastupdate] smalldatetime NULL )</InstallSql>
+	<UninstallSql Desc="卸载的sql语句">DROP TABLE [sd_plug_spider]</UninstallSql>
+</skin>

@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：扩展 > <a href="?">广告管理</a> > <a href="?act=add_pic">添加图片广告</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">广告名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" maxlength="50" class="ip" data-rule="广告名称:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">类别选择：</div>
+                    <div class="form_input"><select name="t1" class="ip"><option value="0">不设置类别</option>{sdcms:rs top="20" table="sd_expand_class" where="followid=3" order="ordnum,classid"}<option value="{$rs[classid]}">{$rs[classname]}</option>{/sdcms:rs}</select></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">开始日期：</div>
+                    <div class="form_input"><input type="text" name="t2" size="50" maxlength="10" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">结束日期：</div>
+                    <div class="form_input"><input type="text" name="t3" size="50" maxlength="10" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">图片地址：</div>
+                    <div class="form_input"><input type="text" name="t4" id="t4" size="50" maxlength="255" class="ip" data-rule="图片地址:required;" /><input type="button" value="上传" config="t4:1:0:6:0" class="bnt bnt_save" />　<span>可以为空</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">链接网址：</div>
+                    <div class="form_input"><input type="text" name="t5" size="50" maxlength="255" class="ip" data-rule="链接网址:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">图片宽度：</div>
+                    <div class="form_input"><input type="text" name="t6" size="50" maxlength="4" class="ip" /> px</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">图片高度：</div>
+                    <div class="form_input"><input type="text" name="t7" size="50" maxlength="4" class="ip" /> px</div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">到期提示：</div>
+                    <div class="form_input"><textarea name="t8" cols="60" rows="3" class="tt" ></textarea></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">广告排序：</div>
+                    <div class="form_input"><input type="text" name="t9" size="50" maxlength="10" class="ip" value="0" />　<span>数字越大越靠前</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">属性设置：</div>
+                    <div class="form_input"><input type="checkbox" name="t10" id="t10" value="1" checked="checked" /><label for="t10">通过审核</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=add_pic_db",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?"',1000);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

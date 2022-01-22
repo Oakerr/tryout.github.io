@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url,data;
+					url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#model_"+id).fadeOut('slow');
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+		$(".islock").click(function(){doset("islock");})
+		$(".nolock").click(function(){doset("nolock");})			
+})
+
+function doset(t0)
+{
+	var arrchk=$("input[name='id']:checked");
+	var idarr;
+	idarr="";
+	$(arrchk).each(function(){
+		if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+	}); 
+	if(idarr=="")
+	{
+		$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+	}
+	else
+	{
+		var url;
+		url='?act=doset&go='+t0+'&id='+idarr;
+		$.ajax({
+		type:"get",
+		cache:false,
+		url:url,
+		success:function(_)
+		{
+			if(_.substring(0,1)==0)
+			{
+				$.fn.tips({type:"error",content:_.substring(1)});
+			}
+			else
+			{
+				location.href="?";
+			}
+		}
+		});
+	}
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：栏目 > <a href="?">模型管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="?act=add"><span class="iconfont">&#xe618;</span>添加模型</a></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="nolock">开启模型</a></dt>
+                    <dt><a href="javascript:;" class="islock">锁定模型</a></dt>
+                </dl></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        模型列表
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th width="40">ID</th>
+                    <th>模型名称</th>
+                    <th width="150">数据表</th>
+                    <th width="250">描述</th>
+                    <th width="60">状态</th>
+                    <th width="150">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {sdcms:rs top="0" table="sd_model" order="modelid desc"}
+            {rs:eof}
+            <tr>
+                <td colspan="7">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="model_{$rs[modelid]}">
+                <td><input name="id" type="checkbox" value="{$rs[modelid]}" /></td>
+                <td>{$rs[modelid]}</td>
+                <td class="txt_left">{$rs[modelname]}</td>
+                <td>{$rs[tablename]}</td>
+                <td>{$rs[modeldesc]}</td>
+                <td>{sdcms.iif($rs[islock]=0,"<span>锁定</span>","正常")}</td>
+                <td><a href="sd_model_field.asp?act=field&modelid={$rs[modelid]}">自定义字段</a>　<a href="?act=edit&id={$rs[modelid]}">编辑</a>{if $rs[modelid]>4}　<a href="javascript:;" class="del" rel="{$rs[modelid]}">删除</a>{/if}</td>
+            </tr>
+            {/sdcms:rs}            
+        </table>
+        </form>
+    </div>
+</div>
+</body>
+</html>

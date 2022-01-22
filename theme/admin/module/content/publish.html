@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.vtip.css" rel="stylesheet" type="text/css">
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+	var id;
+	id=$(this).attr("rel");
+		top.dialog({
+			content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u0028\u4e0d\u53ef\u6062\u590d\uff01\u0029',
+			ok:function(){
+				var url,data;
+				url='?act=del&id='+id+'';
+				$.ajax({
+				type:"get",
+				cache:false,
+				url:url,
+				success:function(_)
+				{
+					if(_.substring(0,1)==0)
+					{
+						$.fn.tips({type:'error',content:_.substring(1)})
+					}
+					else
+					{
+						$.fn.tips({type:'ok',content:'\u64cd\u4f5c\u6210\u529f'})
+						$("#content_"+id).fadeOut('slow');
+						setTimeout('location.href="?"',1000);
+					}
+				}
+				});
+								
+				},
+			cancel:true 
+		}).showModal();
+		
+	})
+	//单个通过
+	$(".pass").click(function(){
+	var id;
+	id=$(this).attr("rel");
+		top.dialog({
+			content:'\u786e\u5b9a\u8981\u901a\u8fc7\u5ba1\u6838\uff1f',
+			ok:function(){
+				var url,data;
+				url='?act=pass&id='+id+'';
+				$.ajax({
+				type:"get",
+				cache:false,
+				url:url,
+				success:function(_)
+				{
+					if(_.substring(0,1)==0)
+					{
+						$.fn.tips({type:'error',content:_.substring(1)})
+					}
+					else
+					{
+						$.fn.tips({type:'ok',content:'\u64cd\u4f5c\u6210\u529f'})
+						$("#content_"+id).fadeOut('slow');
+						setTimeout('location.href="?"',1000);
+					}
+				}
+				});
+								
+				},
+			cancel:true 
+		}).showModal();
+	
+	})
+	//单个退稿
+	$(".nopass").click(function(){
+	var id;
+	id=$(this).attr("rel");
+		top.dialog({
+			content:'\u786e\u5b9a\u8981\u9000\u7a3f\uff1f',
+			ok:function(){
+				var url,data;
+				url='?act=nopass&id='+id+'';
+				$.ajax({
+				type:"get",
+				cache:false,
+				url:url,
+				success:function(_)
+				{
+					if(_.substring(0,1)==0)
+					{
+						$.fn.tips({type:'error',content:_.substring(1)})
+					}
+					else
+					{
+						$.fn.tips({type:'ok',content:'\u64cd\u4f5c\u6210\u529f'})
+						setTimeout('location.href="?"',1000);
+					}
+				}
+				});
+								
+				},
+			cancel:true 
+		}).showModal();
+	
+	})
+		//单个清空
+		$(".delclear").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u6e05\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url,data;
+					url='?act=delclear&id='+id+'&classid={classid}';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:'error',content:_.substring(1)})
+						}
+						else
+						{
+							$.fn.tips({type:'ok',content:'\u64cd\u4f5c\u6210\u529f'})
+							$("#content_"+id).fadeOut('slow');
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+		
+		//批量清空
+		$(".dosome").click(function(){
+		 
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:'\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f'})
+			}
+			else
+			{
+				top.dialog({
+					content:'\u786e\u5b9a\u8981\u8fd8\u539f\uff1f',
+					ok:function(){
+						var url;
+						url='?act=redo&id='+idarr+'&classid={classid}';
+						$.ajax({
+						type:"get",
+						cache:false,
+						url:url,
+						success:function(_)
+						{
+							if(_.substring(0,1)==0)
+							{
+								$.fn.tips({type:'error',content:_.substring(1)})
+							}
+							else
+							{
+								$.fn.tips({type:'ok',content:'\u8fd8\u539f\u6210\u529f'})
+								var idnum;
+								idnum=idarr.split(",")
+								for(i=0;i<=idnum.length;i++)
+								{
+									$("#content_"+idnum[i]).fadeOut('slow');
+								}
+								setTimeout('location.href="?"',1000);
+							}
+						}
+						});
+										
+						},
+						cancel:true 
+					}).showModal();
+			}
+		})
+		
+		//全部删除
+		$(".clear").click(function(){
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\u5168\u90e8\u6295\u7a3f\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url;
+					url='?act=clearall';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:'error',content:_.substring(1)})
+						}
+						else
+						{
+							$.fn.tips({type:'ok',content:'\u6e05\u7a7a\u6210\u529f'})
+							setTimeout('location.href="?"',1500);
+						}
+					}
+					});
+									
+					},
+					cancel:true 
+				}).showModal();
+			})
+		//批量删除
+		$(".delsome").click(function(){
+		 
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:'\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f'})
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\u4e48\uff1f',
+				ok:function(){
+					var url;
+					url='?act=delsome&id='+idarr+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:'error',content:_.substring(1)})
+						}
+						else
+						{
+							$.fn.tips({type:'ok',content:'\u5220\u9664\u6210\u529f'})
+							var idnum;
+							idnum=idarr.split(",")
+							for(i=0;i<=idnum.length;i++)
+							{
+								$("#content_"+idnum[i]).fadeOut('slow');
+							}
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})
+		
+		$(".islock").click(function(){doset("islock");})
+		$(".nolock").click(function(){doset("nolock");})
+})
+
+function doset(t0)
+{
+	var arrchk=$("input[name='id']:checked");
+	var idarr;
+	idarr="";
+	$(arrchk).each(function(){
+		if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+	}); 
+	if(idarr=="")
+	{
+		$.fn.tips({content:'\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f'})
+	}
+	else
+	{
+		var url;
+		url='?act=doset&go='+t0+'&id='+idarr+'';
+		$.ajax({
+		type:"get",
+		cache:false,
+		url:url,
+		success:function(_)
+		{
+			if(_.substring(0,1)==0)
+			{
+				$.fn.tips({type:'error',content:_.substring(1)})
+			}
+			else
+			{
+				setTimeout('location.href="?"',1000);
+			}
+		}
+		});
+	}
+}
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：内容 > 内容管理 > <a href="?">投稿管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <div class="search"><form action="?" method="get" onSubmit="return checksearch(this)"><input type="text" name="keyword" class="ip" value="请输入关键字" onFocus="if(this.value==defaultValue)this.value=''" onBlur="if(this.value=='')this.value=defaultValue" /><input type="submit" class="bnt" value="查询" /></form></div>
+            <ul>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                <dt><a href="javascript:;" class="islock">通过审核</a></dt>
+                <dt><a href="javascript:;" class="nolock">拒绝通过</a></dt>
+                <dt><a href="javascript:;" class="delsome">批量删除</a></dt>
+            </dl></li>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{statitle}</a><dl>
+                <dt><a href="?sta=0">全部</a></dt>
+                <dt><a href="?sta=1">待审核</a></dt>
+                <dt><a href="?sta=2">已退稿</a></dt>         
+            </dl></li>
+            <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{ordtitle}</a><dl>
+                <dt><a href="?order=0">正常排序</a></dt>
+                <dt><a href="?order=1">发表日期↑</a></dt>
+                <dt><a href="?order=2">发表日期↓</a></dt>       
+            </dl></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        投稿管理
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>标题</th>
+                    <th width="140">栏目</th>
+                    <th width="60">缩图</th>
+                    <th width="60">状态</th>
+                    <th width="120">用户</th>
+                    <th width="150">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,createdate,title,ispic,sd_content.islock,(select username from sd_user where id=userid) as username,classid,adminurl,catename" table="sd_content"  join="left join view_category on sd_content.classid=view_category.cateid" where="[sqlwhere][wherekey]" order="[orderby]" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="7">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="content_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td title="编号：{$rs[id]}<br>发布：{$rs[createdate]}" class="vtip txt_left">{$rs[title]}</td>
+                <td>{$rs[catename]}</td>
+                <td>{sdcms.iif($rs[ispic]=0,"<span>否</span>","是")}</td>
+                <td>{sdcms.iif($rs[islock]=-1,"<span>待审核</span>","已退稿")}</td>
+                <td>{$rs[username]}</td>
+                <td>{if $rs[islock]=-1}<a href="javascript:;" class="pass" rel="{$rs[id]}">通过</a>　<a href="javascript:;" class="nopass" rel="{$rs[id]}">退稿</a>{/if}　<a href="{$rs[adminurl]}{$rs[classid]}&act=publish&id={$rs[id]}&page={page}&sta={sta}&order={order}&keyword={keyword}">编辑</a>　<a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

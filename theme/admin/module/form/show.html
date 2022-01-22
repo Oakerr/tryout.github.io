@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：栏目 > <a href="?">表单管理</a> > <a href="?act=list&id={id}">数据列表</a> > 查看</div>
+    <div class="right_body">
+        <div class="table_form">
+            {if isarray(form_data)}
+            {for i=0 to ubound(form_data,2)}
+            <div class="form_group">
+                <div class="form_txt">{form_data(1,i)}：</div>
+                <div class="form_input"><%=rsshow(""&form_data(0,i)&"")%></div>
+            </div>
+            {/for}
+            {/if}
+            <div class="form_group">
+                <div class="form_bnt"><input type="button" value="返回" class="bnt_normal goback"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

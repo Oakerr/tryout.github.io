@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+function setclose(t0)
+{
+	if(t0==""){$(".no").css("display","none");$(".text").css("display","none");$(".pic").css("display","none");}else{$(".no").css("display","block");if($("#t1_1").attr("checked")){$(".text").css("display","block");$(".pic").css("display","none");}else{$(".text").css("display","none");$(".pic").css("display","block");}}
+}
+$(function(){
+	//
+	$(".{if sitedata(0,1)}pic{else}text{/if}").css("display","none");
+	{if sitedata(0,0)=""}$(".no").css("display","none");$(".text").css("display","none");$(".pic").css("display","none");{/if}
+	$("#t1_1").click(function(){$(".text").css("display","block");$(".pic").css("display","none");})
+	$("#t1_2").click(function(){$(".text").css("display","none");$(".pic").css("display","block");})
+	$("#bgcolor").click(function()
+		{
+			var _w=$(this).width();
+			var _h=$(this).height();
+			var _x=$(this).offset().top;
+			var _y=$(this).offset().left;
+			$.fn.colorpicker
+			(
+				{
+					x:_x,
+					y:_y+_w,
+					inputid:"t7",
+					backid:"bgcolor"
+				}
+			);
+		})
+	//
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=aspjpeg">水印设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">组件开关：</div>
+                    <div class="form_input"><select name="t0" onChange="setclose(this.value)" class="ip">
+               <option value="" {asp sdcms.iif(sitedata(0,0)="","selected","")}>关闭组件</option>
+               <option value="{asp sdcms.iif(sdcms.isinstall("Persits.Jpeg"),"aspjpeg","-1")}" {asp sdcms.iif(sitedata(0,0)="aspjpeg","selected","")}>AspJpeg{asp sdcms.iif(sdcms.isinstall("Persits.Jpeg"),"√","×")}</option>
+           </select>　<span>都不支持时，请关闭组件</span></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">水印类型：</div>
+                    <div class="form_input"><input type="radio" name="t1" id="t1_1" value="true" style="border:0;"{if sitedata(0,1)} checked{/if} /><label for="t1_1">文字水印</label><input type="radio" name="t1" id="t1_2" value="false" style="border:0;"{if not(sitedata(0,1))} checked{/if} /><label for="t1_2">图片水印</label></div>
+                </div>
+                <div class="form_group text">
+                    <div class="form_txt">水印文字：</div>
+                    <div class="form_input">
+                    <input type="text" name="t2" size="20" maxlength="50" class="ip" value="{sitedata(0,2)}" data-rule="水印文字:required;" />
+                    </div>
+                </div>
+                <div class="form_group text">
+                    <div class="form_txt">字体颜色：</div>
+                    <div class="form_input"><input type="text" name="t3" id="s2" size="20" maxlength="7" class="ip" value="{sitedata(0,3)}" data-rule="字体颜色:required;" /> <img src="{webroot}lib/images/colorpicker.gif" title="文字颜色" align="absmiddle" id="color" style="background:{sitedata(0,3)}" /></div>
+                </div>
+                <div class="form_group text">
+                    <div class="form_txt">字体选择：</div>
+                    <div class="form_input"><select name="t4" class="ip">
+                    <option value="宋体"{if sitedata(0,4)="宋体"} selected{/if}>宋体</option>
+                    <option value="黑体"{if sitedata(0,4)="黑体"} selected{/if}>黑体</option>
+                    <option value="隶书"{if sitedata(0,4)="隶书"} selected{/if}>隶书</option>
+                    <option value="Arial"{if sitedata(0,4)="Arial"} selected{/if}>Arial</option> 
+                    <option value="Verdana"{if sitedata(0,4)="Verdana"} selected{/if}>Verdana</option>
+                </select></div>
+                </div>
+                <div class="form_group text">
+                    <div class="form_txt">字体大小：</div>
+                    <div class="form_input"><input type="text" name="t13" size="20" maxlength="3" class="ip" value="{sitedata(0,13)}" data-rule="字体颜色:required;digits" /><span>单位：px</span></div>
+                </div>
+                <div class="form_group text">
+                    <div class="form_txt">是否加粗：</div>
+                    <div class="form_input"><input type="radio" name="t5" id="t5_1" value="true" {if sitedata(0,5)="true"} checked{/if} />是<input type="radio" name="t5" id="t5_2" value="false" {if sitedata(0,5)="false"} checked{/if} />否</div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">水印图片：</div>
+                    <div class="form_input"><input type="text" name="t6" size="30" maxlength="50" class="ip" value="{sitedata(0,6)}" /></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">去除底色：</div>
+                    <div class="form_input"><input type="text" name="t7" id="t7" size="10" maxlength="7" class="ip" value="{sitedata(0,7)}" /> <img src="{webroot}lib/images/colorpicker.gif" title="文字颜色" align="absmiddle" id="bgcolor" style="background:{sitedata(0,7)}" /></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">图片最小尺寸：</div>
+                    <div class="form_input">宽度：<input type="text" name="t8" size="5" maxlength="4" class="ip" value="{sitedata(0,8)}" data-rule="宽度:required;digits"  />　高度：<input type="text" name="t9" size="5" maxlength="4" class="ip" value="{sitedata(0,9)}" data-rule="高度:required;digits"  /></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">水印透明度：</div>
+                    <div class="form_input"><input type="text" name="t10" size="10" maxlength="3" class="ip" value="{sitedata(0,10)}" data-rule="水印透明度:required;" /><span>0-1之间的数字</span></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">水印质量：</div>
+                    <div class="form_input"><input type="text" name="t11" size="10" maxlength="3" class="ip" value="{sitedata(0,11)}" data-rule="水印质量:required;" /><span>0-100 为100时质量最好</span></div>
+                </div>
+                <div class="form_group no">
+                    <div class="form_txt">水印位置：</div>
+                    <div class="form_input"><select name="t12" class="ip">
+                <option value="0"{if sitedata(0,12)="0"} selected{/if}>左上</option>
+                <option value="1"{if sitedata(0,12)="1"} selected{/if}>左下</option>
+                <option value="2"{if sitedata(0,12)="2"} selected{/if}>居中</option>
+                <option value="3"{if sitedata(0,12)="3"} selected{/if}>右上</option>
+                <option value="4"{if sitedata(0,12)="4"} selected{/if}>右下</option>
+                <option value="5"{if sitedata(0,12)="5"} selected{/if}>随机</option>
+                </select></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=aspjpegdb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=aspjpeg'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

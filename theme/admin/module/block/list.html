@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f\u4e0d\u53ef\u6062\u590d\uff01',
+				ok:function(){
+					var url='?act=del&id='+id;
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#block_"+id).fadeOut('slow');
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		})
+	
+	$(".ordnum").each(function(e){
+		var name=$(this).attr("config");
+		var html='{sdcms:block("';
+		html+=name;
+		html+='")}';
+		$(this).attr("value",html);
+	})
+		 
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：内容 > <a href="?">区块管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <ul>
+                <li><a href="?act=add"><span class="iconfont">&#xe618;</span>新建区块</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        区块列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="200">文件名称</th>
+                    <th>区块说明</th>
+                    <th width="230">调用代码</th>
+                    <th width="160">更新日期</th>
+                    <th width="100">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            <%dim fso,fsofolder,fsocontent,fsocount%>
+            <%set fso=createobject("scripting.filesystemobject")%>
+            <%set fsofolder=fso.getfolder(server.mappath(""&webroot&"theme/"&theme_root&"/block"))%>
+            <%set fsocontent=fsofolder.files%>
+            <%dim fsoitem,i%>
+            <%i=0%>
+            <%for each fsoitem in fsocontent%>
+            <%if lcase(fsoitem.name)<>"config.asp" then%>
+            <%dim name:name=fsoitem.name%>
+            <%dim txt:txt=mid(name,instr(name,"."))%>
+            <tr id="block_<%=replace(name,txt,"")%>">
+                <td><a href="?act=edit&filename=<%=replace(name,txt,"")%>"><%=replace(name,txt,"")%></a></td>
+                <td class="txt_left"><%=getblockname("block/"&name)%></td>
+                <td><input type="text" value="" size="30" class="ordnum" config="<%=replace(name,txt,"")%>" onFocus="this.select()"></td>
+                <td><%=fsoitem.datelastmodified%></td>
+                <td><a href="?act=edit&filename=<%=replace(name,txt,"")%>">编辑</a>　<a href="javascript:;" class="del" rel="<%=replace(name,txt,"")%>">删除</a></td>
+            </tr>
+            <%i=i+1%>
+            <%end if:next%>
+            <%if i=0 then%>
+            <tr>
+                <td align="center" colspan="5">没有区块</td>
+            </tr>
+            <%end if%>
+            <%set fso=nothing%>
+            <%set fsofolder=nothing%>
+            <%set fsocontent=nothing%>          
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.autocomplete.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.livequery.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}lib/js/jquery.autocomplete.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：栏目 > <a href="?">表单管理</a> > <a href="?act=edit&id={id}">修改表单</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">表单名称：</div>
+                    <div class="form_input"><input type="text" name="t0" size="40" maxlength="50" value="{datadb(0,0)}" class="ip" data-rule="表单名称:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">数据表名：</div>
+                    <div class="form_input"><input name="t1" type="text" disabled class="ip" id="t1" value="{datadb(1,0)}" size="40" maxlength="15" />　<span>不可更改</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">禁止外部提交：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t2" value="1" id="t2_1"{if datadb(2,0)=1} checked{/if} /><label for="t2_1">启用</label>
+                    <input type="radio" name="t2" value="0" id="t2_0"{if datadb(2,0)=0} checked{/if} /><label for="t2_0">禁止</label>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">开启验证码：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t3" value="1" id="t3_1"{if datadb(3,0)=1} checked{/if} /><label for="t3_1">启用</label>
+                    <input type="radio" name="t3" value="0" id="t3_0"{if datadb(3,0)=0} checked{/if} /><label for="t3_0">禁止</label>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">状态：</div>
+                    <div class="form_input">
+                    <input type="radio" name="t4" value="1" id="t4_1"{if datadb(4,0)=1} checked{/if} /><label for="t4_1">正常</label>
+                    <input type="radio" name="t4" value="0" id="t4_0"{if datadb(4,0)=0} checked{/if} /><label for="t4_0">锁定</label>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_right_effect',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=editdb&id={id}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout('location.href="?"',1000);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}	
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

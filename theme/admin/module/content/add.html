@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/jquery.colorpicker.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/jquery.colorpicker.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$("#s0").click(function(){
+		if($(this).attr("checked")){
+		$("#c0").attr("value","font-weight:bold;");
+		}else{$("#c0").attr("value","");}
+	})
+	$("#s1").click(function(){
+		if($(this).attr("checked")){
+		$("#c1").attr("value","font-style:italic;");
+		}else{$("#c1").attr("value","");}
+	})
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：内容 > <a href="?classid={classid}">{catename}</a> > <a href="?classid={classid}&act=add">发布外链</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">标题：</div>
+                    <div class="form_input"><input type="text" name="t0" id="t0" size="50" maxlength="255" class="ip" data-rule="标题:required;" />
+           <input name="s0" type="checkbox" id="s0" /><label for="s0">粗体</label>
+           <input name="s1" type="checkbox" id="s1" /><label for="s1">斜体</label>
+           <input type="hidden" name="c0" id="c0" />
+           <input type="hidden" name="c1" id="c1" />
+           <input type="hidden" name="s2" id="s2" />
+           <img src="{webroot}lib/images/colorpicker.gif" title="标题颜色" align="absmiddle" id="color" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">链接：</div>
+                    <div class="form_input"><input type="text" name="t1" size="50" maxlength="255" class="ip" data-rule="链接:required;" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">Tags：</div>
+                    <div class="form_input"><input type="text" name="t2" id="t2" size="50" maxlength="255" class="ip" /><input type="button" value="根据标题提取" config="t0:t2:{classid}" class="bnt_tags bnt_save" />　<span>支持空格和英文逗号分隔</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">缩略图：</div>
+                    <div class="form_input"><input type="text" name="t3" size="50" maxlength="255" class="ip" /><input type="button" value="上传" config="t3:1:0:1"  class="bnt bnt_save" />　<span>可以为空</span></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">状态：</div>
+                    <div class="form_input">
+                    <input type="checkbox" name="t4" id="t4" value="1" checked="checked" /><label for="t4">发布</label>
+               <input type="checkbox" name="t5" id="t5" value="1" /><label for="t5">推荐</label>
+               <input type="checkbox" name="t6" id="t6" value="1" /><label for="t6">置顶</label></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_txt">发布日期：</div>
+                    <div class="form_input"><input name="t7" type="text" value="{now()}" size="50" maxlength="50" class="ip" /></div>
+                </div>
+                <div class="form_group">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=adddb&classid={classid}",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					if(data.status=="n"){$.fn.tips({type:"warn",content:data.info});$("input[type='submit']").attr("disabled",false);}
+					else
+					{
+						var arr=data.info;
+						arr=arr.split(":");
+						var id=arr[0];
+						var info=arr[1];
+						var url="sd_content.asp?classid={classid}";
+						{if webmode=3}
+						if($("#t4").attr("checked")!=undefined)
+						{
+							{if sdcms.getsys("htmlhome") or sdcms.getsys("htmlclass")}
+							$.fn.tips.close();
+							top.dialog({id:"html",title:"正在生成相关数据",padding:0,content:"<div id='html_staus'></div>",cancel:false}).showModal();
+							var staus=true;
+							{if sdcms.getsys("htmlhome")}
+							staus=false;
+							staus=auto_home({adminid},"{admin_loginbase}","{admin_loginkey}")
+							{/if}
+							{if sdcms.getsys("htmlclass")}
+							var parentid="{parentid}";
+							var arr=parentid.split(",");
+							for(i=0;i<arr.length;i++)
+							{
+								staus=false;
+								staus=auto_class({adminid},"{admin_loginbase}","{admin_loginkey}",{sdcms.getsys("htmltotal")},arr[i])
+							}
+							{/if}
+							if(staus){setTimeout(function(){location.href=url},1500);}
+							{else}
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+							{/if}
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+						}
+						{else}
+							$.fn.tips({type:"ok",content:info});
+							setTimeout(function(){location.href=url},1000)
+						{/if}
+					}
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

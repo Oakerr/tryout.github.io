@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：生成 > <a href="?act=category">生成栏目</a></div>
+    <div class="right_body">
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_group">
+                    <div class="form_txt">栏目选择：</div>
+                    <div class="form_input">
+                    <select name="t0" id="t0" class="ip">
+                        <option value="0">所有栏目</option>
+                        {sdcms.get_cateoption(0,1)}
+                    </select>
+                    </div>
+                </div>
+                <div class="form_group">
+                    <div class="form_input"><input type="submit" value="开始生成" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="table_form">
+            <div class="form_group">
+                <div class="form_txt">生成进度：</div>
+                <div class="form_input">
+                    <div id="create_staus"><div id="create_percent">0%</div></div>
+                    <div id="create_text">待生成</div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<div id="idarr"></div>
+<script>
+$(".formname").validator(
+{
+	
+	stopOnError:true,
+	theme:'yellow_top',
+	ignore:':hidden',
+	valid:function(form)
+	{
+		var classid=$("#t0").find("option:selected").val();
+		if(classid==0)
+		{
+			var list="";
+			$("#t0 option").each(function(e)
+			{
+				if($(this).attr("disabled")!="disabled")
+				{
+					list+=","+$(this).val();
+				}
+			})
+			list=list.substring(3);
+			var arr=list.split(",");
+			for(i=0;i<arr.length;i++)
+			{
+				var result=false;
+				result=create_list(arr[i],1);
+				if(result&&i==arr.length-1){setTimeout(function(){percent("100%","栏目生成完成，总计生成<span>"+(i)+"</span>个栏目");},1500)}
+			}
+			
+		}
+		else
+		{
+			create_list(classid,1);
+		}
+	}
+});
+
+
+function percent(t0,t1)
+{
+	$("#create_percent").css("background","#91B6E5");
+	$("#create_percent").css("color","#fff");
+	$("#create_percent").css("width",t0);
+	$("#create_percent").html(t0);
+	$("#create_text").html(t1);
+}
+
+function create_list(classid,page)
+{
+	$.ajax({
+		url:"html/list.asp?admin_id={adminid}&loginbase={admin_loginbase}&loginkey={admin_loginkey}&classid="+classid+"&page="+page,
+		type:"post",
+		cache:false,
+		error:function(e){alert(e);},
+		success:function(d){
+			var total=d.substring(1);
+			if(page>=total)
+			{
+				percent("100%","列表【classid="+classid+"】生成完毕，共计生成了<span>"+total+"</span>页");
+			}
+			else
+			{
+				var w=parseInt(page/total*100)+"%";
+				var t="正在生成：列表【classid="+classid+"】，共<span>"+total+"</span>页，已生成<span>"+page+"</span>页";
+				percent(w,t);
+				return create_list(classid,page+1);
+			}
+		}
+	})
+	return true;
+}
+</script>
+</body>
+</html>

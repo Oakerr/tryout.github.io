@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+window.UEDITOR_HOME_URL="{webroot}";
+var editor_cid="";
+var editor_classid="";
+var editor_upload_root="";
+var editor_adminid="";
+var editor_loginbase="";
+var editor_loginkey="";
+</script>
+<script src="{webroot}lib/ueditor/editor_config.js"></script>
+<script src="{webroot}lib/ueditor/editor.js"></script>
+<script>
+$(function()
+{
+	UE.getEditor('t1',editorOption_other);
+}
+)
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > 会员设置 > <a href="?act=config">基本设置</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_li">
+                    <div class="form_bnt">
+                    <input type="button" value="基本设置" class="bnt_normal" onClick="location.href='?act=config'">
+                    <input type="button" value="用户激活设置" class="bnt_save" onClick="location.href='?act=config_active'">
+                    <input type="button" value="找回密码设置" class="bnt_normal" onClick="location.href='?act=config_pass'"></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">用户帐号激活邮件标题：</div>
+                    <div class="form_input"><input type="text" name="t0" size="50" maxlength="255" value="{userdata(0,3)}" class="ip"  data-rule="邮件标题:required;" /></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">验证用户帐号激活邮件内容：</div>
+                    <div class="form_input">
+                    <textarea name="t1" id="t1" cols="39" rows="4" style="width:96%;">{userdata(0,4)}</textarea>
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			UE.getEditor('t1').sync();
+			$("#t1").val(UE.getEditor('t1').getContent());
+			$.fn.tips({type:'loading',content:'数据提交中'});
+			$.ajax(
+			{
+				url:"?act=configactivedb",
+				type:"post",
+				data:$(form).serialize(),
+				success:function(data){
+					data=jQuery.parseJSON(data);
+					var type="warn";
+					if(data.status=="y"){type="ok";}
+					$.fn.tips({type:type,content:data.info});
+					if(data.status=="y"){setTimeout("location.href='?act=config_active'",1500);}
+					else
+					{$("input[type='submit']").attr("disabled",false);}
+					
+				}
+			});
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>

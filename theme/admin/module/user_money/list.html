@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}theme/admin/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+$(function(){
+	$(".del").click(function(){
+		var id;
+		id=$(this).attr("rel");
+			top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url,data;
+					url='?act=del&id='+id+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							$("#money_"+id).fadeOut('slow');
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+		
+		})
+
+		$(".delall").click(function(){
+		    var arrchk=$("input[name='id']:checked");
+			var idarr;
+			idarr="";
+			$(arrchk).each(function(){
+				if(idarr==""){idarr+=this.value}else{idarr+=","+this.value}                   
+			}); 
+			if(idarr=="")
+			{
+				$.fn.tips({content:"\u81f3\u5c11\u9009\u62e9\u4e00\u6761\u4fe1\u606f"});
+			}
+			else
+			{
+				top.dialog({
+				content:'\u786e\u5b9a\u8981\u5220\u9664\uff1f(\u4e0d\u53ef\u6062\u590d)',
+				ok:function(){
+					var url;
+					url='?act=delall&id='+idarr+'';
+					$.ajax({
+					type:"get",
+					cache:false,
+					url:url,
+					success:function(_)
+					{
+						if(_.substring(0,1)==0)
+						{
+							$.fn.tips({type:"error",content:_.substring(1)});
+						}
+						else
+						{
+							$.fn.tips({type:"ok",content:"\u5220\u9664\u6210\u529f"});
+							var idnum;
+							idnum=idarr.split(",")
+							for(i=0;i<=idnum.length;i++)
+							{
+								$("#money_"+idnum[i]).fadeOut('slow');
+							}
+							setTimeout('location.href="?"',1000);
+						}
+					}
+					});
+									
+					},
+				cancel:true 
+			}).showModal();
+			}
+		})	
+})
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：会员 > <a href="?">财务管理</a></div>
+    <div class="right_body">
+        <div class="nav_menu">
+            <div class="search"><form action="?" method="get" onSubmit="return checksearch(this)"><input type="hidden" name="act" value="list"><input type="text" name="keyword" class="ip" value="请输入关键字" onFocus="if(this.value==defaultValue)this.value=''" onBlur="if(this.value=='')this.value=defaultValue" /><input type="submit" class="bnt" value="查询" /></form></div>
+            <ul>
+                <li><a href="?act=pay"><span class="iconfont">&#xe618;</span>财务入账</a></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe617;</span>批量操作↓</a><dl>
+                    <dt><a href="javascript:;" class="delall">批量删除</a></dt>
+                </dl></li>
+                <li class="dropdown"><a href="javascript:;"><span class="iconfont">&#xe619;</span>{statitle}</a><dl>
+                    <dt><a href="?sta=0">全部</a></dt>
+                    <dt><a href="?sta=1">收入</a></dt>
+                    <dt><a href="?sta=2">支出</a></dt>
+                </dl></li>
+                <li><a href="?act=paylist"><span class="iconfont">&#xe61b;</span>充值记录</a></li>
+            </ul>
+        </div>
+        
+        <div class="table_title">
+        财务列表
+        </div>
+        <form>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th width="20"><input type="checkbox" name="chkall" onClick="checkall(this.form)" title="全选/取消" /></th>
+                    <th>名称|流水号</th>
+                    <th width="80">金额</th>
+                    <th width="80">性质</th>
+                    <th width="100">用户名</th>
+                    <th width="150">日期</th>
+                    <th width="60">管理</th>
+                </tr>
+            </thead>
+            <tbody>
+            {dim islist:islist=1}
+            {sdcms:rs field="id,content,amount,type,(select username from sd_user where sd_user.id=sd_user_money.userid) as username,createdate,userid" table="sd_user_money" where="1=1 [sqlwhere][wherekey]" order="id desc" pagesize="20" isadminurl="0"}
+            {rs:eof}
+            <%islist=0%>
+            <tr>
+                <td colspan="7">没有资料</td>
+            </tr>
+            {/rs:eof}
+            <tr id="money_{$rs[id]}">
+                <td><input name="id" type="checkbox" value="{$rs[id]}" /></td>
+                <td class="txt_left">{$rs[content]}</td>
+                <td>{if $rs[type]=2}-{/if}{sdcms.getnum($rs[amount])}</td>
+                <td>{if $rs[type]=1}收入{else}<span>支出</span>{/if}</td>
+                <td><a href="?userid={$rs[userid]}">{$rs[username]}</a></td>
+                <td>{$rs[createdate]}</td>
+                <td><a href="javascript:;" class="del" rel="{$rs[id]}">删除</a></td>
+            </tr>
+            {/sdcms:rs}            
+            </tbody>
+        </table>
+        </form>
+        {if islist=1}
+        <div class="table_bottom">
+            <ul>{showpage}</ul>
+        </div>
+        {/if}
+    </div>
+</div>
+</body>
+</html>

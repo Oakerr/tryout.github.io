@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/js/jquery.vtip.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/dialog/artdialog.js"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：界面 > <a href="?">模板管理</a>{position}</div>
+    <div class="right_body">       
+        <div class="table_title">
+        模板列表
+        </div>
+        <table id="tablelist">
+            <thead>
+                <tr>
+                    <th>目录/名称</th>
+                    <th>说明</th>
+                    <th width="130">文件大小</th>
+                    <th width="200">更新日期</th>
+                </tr>
+            </thead>
+            <tbody>
+            <%dim fso,fsofolder,fsocontent,fsocount%>
+            <%set fso=createobject("scripting.filesystemobject")%>
+            <%set fsofolder=fso.getfolder(server.mappath(""&webroot&"theme/"&folder))%>
+            <%set fsocontent=fsofolder.files%>
+            <%for each fsocount in fsofolder.subfolders%>
+            <%if lcase(fsocount.name)<>"block" then%>
+            <tr>
+                <td class="txt_left">　<img src="{webroot}lib/images/ext/folder.gif" align="absmiddle"> <a href="?act=list&folder=<%=folder&"/"&fsocount.name%>"><%=fsocount.name%></a></td>
+                <td></td>
+                <td><span><%=formatnumber(fsocount.size/1024,2,true,false,true)%> KB</span></td>
+                <td><%=fsocount.datelastmodified%></td>
+            </tr>
+            <%end if%>
+            <%next%>
+            <%dim fsoitem%>
+            <%for each fsoitem in fsocontent%>
+            <%edittype=false%>
+            <%picsrc=""%>
+            <%call check_file(right(fsoitem.name,3))%>
+            <%if lcase(fsoitem.name)<>"config.asp" and lcase(fsoitem.name)<>"base.asp" and lcase(fsoitem.name)<>"config.xml" then%>
+            <%dim name:name=fsoitem.name%>
+            <tr>
+                <td class="txt_left">　　<img src="{webroot}lib/images/ext/<%=picsrc%>.gif" align="absmiddle"><a href="<%if edittype then%>?act=edit&filename=<%=folder&"/"&fsoitem.name%><%else%>{webroot}theme/<%=folder&"/"&fsoitem.name%><%end if%>" <%if not edittype then%>title="查看详细" target="_blank"<%end if%>><%=fsoitem.name%></a></td>
+                <td><span><%=getblockname(replace(folder&"/"&name,theme_root&"/",""))%></span></td>
+                <td><span><%=formatnumber(fsoitem.size/1024,2,true,false,true)%> KB</span></td>
+                <td><%=fsoitem.datelastmodified%></td>
+                </tr>
+            <%end if:next%>
+            <%set fso=nothing%>
+            <%set fsofolder=nothing%>
+            <%set fsocontent=nothing%>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

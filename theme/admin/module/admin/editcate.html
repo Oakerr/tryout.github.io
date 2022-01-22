@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理页面</title>
+<link href="{webroot}theme/admin/css/iframe.css" rel="stylesheet" type="text/css" />
+<link href="{webroot}lib/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css">
+<script src="{webroot}lib/js/jquery.js"></script>
+<script src="{webroot}lib/js/jquery-migrate-1.1.0.min.js"></script>
+<script src="{webroot}lib/tips/jquery.tips.js"></script>
+<script src="{webroot}lib/validator/jquery.validator.js"></script>
+<script src="{webroot}lib/validator/zh_CN.js"></script>
+<script src="{webroot}lib/js/base.js"></script>
+<script src="{webroot}theme/admin/js/admin.js"></script>
+<script src="{webroot}lib/js/jquery.ztree.core-3.5.min.js"></script>
+<script src="{webroot}lib/js/jquery.ztree.excheck-3.5.min.js"></script>
+<script src="?act=loadtree&id={id}"></script>
+<!--[if lt IE 9]>
+<script src="{webroot}lib/js/html5.js"></script>
+<![endif]-->
+<script>
+var setting={check:{enable:true},data:{simpleData:{enable:true}}};
+$(function(){
+	$.fn.zTree.init($("#tree"),setting,zNodes);
+	$(".frist").click(function(){
+		var config=$(this).attr("config")
+		$("."+config).attr("checked",$(this).attr("checked"));
+	})
+
+});
+</script>
+</head>
+<body>
+
+<div class="layout-center">
+	<div class="right_subject">当前位置：设置 > <a href="?act=group">角色管理</a> > <a href="?act=editcate&id={id}">栏目权限</a></div>
+    <div class="right_body">
+               
+        <div class="table_form">
+            <form class="formname" method="post">
+                <div class="form_li">
+                    <div class="form_txt">栏目选择：</div>
+                    <div class="form_input"><ul id="tree" class="ztree"></ul></div>
+                </div>
+                <div class="form_li">
+                    <div class="form_txt">栏目权限：</div>
+                    <div class="form_input">
+                    <input type="checkbox" name="t1" id="t1_1" value="1" {if instr(catedata(0,0),"1")>0}checked{/if}><label for="t1_1">添加</label>
+           <input type="checkbox" name="t1" id="t1_2" value="2" {if instr(catedata(0,0),"2")>0}checked{/if}><label for="t1_2">编辑</label>
+           <input type="checkbox" name="t1" id="t1_3" value="3" {if instr(catedata(0,0),"3")>0}checked{/if}><label for="t1_3">删除</label>
+           <input type="checkbox" name="t1" id="t1_4" value="4" {if instr(catedata(0,0),"4")>0}checked{/if}><label for="t1_4">移动</label>
+           <input type="checkbox" name="t1" id="t1_5" value="5" {if instr(catedata(0,0),"5")>0}checked{/if}><label for="t1_5">设置</label>
+                    </div>
+                </div>
+                <div class="form_li">
+                    <div class="form_bnt"><input type="submit" value="保存" class="bnt_save"><input type="button" value="返回" class="bnt_normal goback"></div>
+                </div>
+            
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(".formname").validator(
+	{
+		stopOnError:true,
+        theme:'yellow_top',
+		ignore:':hidden',
+		beforeSubmit:function(){$("input[type='submit']").attr("disabled",true);},
+		valid:function(form)
+		{
+			$.fn.tips({type:'loading',content:'数据提交中'});		
+			var treeObj=$.fn.zTree.getZTreeObj("tree");
+			var nodes=treeObj.getCheckedNodes(true);
+			var str="";
+			for(var i=0;i<nodes.length;i++){
+				if(str==""){str=nodes[i].id}else{str+=","+nodes[i].id}
+			} 
+			var d0=str.replace("-1,","");
+			var d1=""; 
+			for(var i=0;i<form.t1.length;i++) 
+			{ 
+				if(form.t1[i].checked)
+				{
+					d1=="" ? d1=form.t1[i].value : d1+=","+form.t1[i].value;
+				}
+			}
+			var url,data;
+			url="?act=editcatedb&id={id}";
+			data="t0="+encodeURIComponent(d0);
+			data+="&t1="+encodeURIComponent(d1);
+			$.ajax({
+			type:"post",
+			cache:false,
+			url:url,
+			data:data,
+			success:function(_){
+				_=jQuery.parseJSON(_);
+				var type="warn";
+				if(_.status=="y"){type="ok";}
+				$.fn.tips({type:type,content:_.info});
+				if(_.status=="y"){setTimeout("location.href='?act=group'",1500);}
+				else{$("input[type='submit']").attr("disabled",false);}
+			}
+			});
+			return false
+			
+		},
+		invalid:function(){$("input[type='submit']").attr("disabled",false);}
+	}
+);
+</script>
+</body>
+</html>
